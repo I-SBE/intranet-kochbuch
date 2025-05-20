@@ -40,4 +40,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+//--------------------------------------------------------------------------
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const rows = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Rezept wurde nicht gefunden.' });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Fehler beim Abrufen des Rezepts.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 export default router;
