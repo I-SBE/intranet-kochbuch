@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import { pool } from '../db/db.js';
+import { isAuthenticated } from '../middleware/auth.js';
 
 //--------------------------------------------------------------------------
 
@@ -59,7 +60,13 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Ungültige E-Mail oder Passwort.' });
     }
 
-    // Important
+    req.session.user = {
+      id: user.id,
+      firstName: user.firstName,
+      email: user.email
+    };
+
+    // Important (Don't send the Password)
     delete user.password;
 
     res.status(200).json({
@@ -71,6 +78,20 @@ router.post('/login', async (req, res) => {
     console.error('Login-Fehler:', err);
     res.status(500).json({ message: 'Fehler beim Login.' });
   }
+});
+
+//--------------------------------------------------------------------------
+
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Fehler beim Logout:', err);
+      return res.status(500).json({ message: 'Fehler beim Logout.' });
+    }
+
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Erfolgreich ausgeloggt.' });
+  });
 });
 
 //--------------------------------------------------------------------------

@@ -1,11 +1,12 @@
 import express from 'express';
 import {pool} from '../db/db.js';
+import { isAuthenticated } from '../middleware/auth.js';
 
 const router = express.Router();
 
 //--------------------------------------------------------------------------
 
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
     const rows = await pool.query('SELECT * FROM recipes');
     res.json(rows);
@@ -17,7 +18,7 @@ router.get('/', async (req, res) => {
 
 //--------------------------------------------------------------------------
 
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   const { user_id, title, ingredients, steps } = req.body;
 
   if (!user_id || !title || !ingredients || !steps) {
