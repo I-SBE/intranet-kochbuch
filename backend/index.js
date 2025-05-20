@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import recipesRouter from './routes/recipes.js';
+import usersRouter from './routes/users.js';
 
 //--------------------------------------------------------------------------
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 //--------------------------------------------------------------------------
 
 app.use('/api/recipes', recipesRouter);
+app.use('/api/users', usersRouter);
 
 //--------------------------------------------------------------------------
 
