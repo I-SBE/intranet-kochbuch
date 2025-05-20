@@ -1,13 +1,25 @@
 import express from "express";
 import cors from "cors";
 
+import recipesRouter from './routes/recipes.js';
+
+//--------------------------------------------------------------------------
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+//--------------------------------------------------------------------------
+
 app.get("/", (req, res) => {
   res.json({ status: "Hello World!" });
 });
+
+//--------------------------------------------------------------------------
+
+app.use('/api/recipes', recipesRouter);
+
+//--------------------------------------------------------------------------
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
