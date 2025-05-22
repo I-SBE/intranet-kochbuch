@@ -4,7 +4,7 @@ export async function registerUser(formData) {
     data.append(key, formData[key]);
   }
 
-  const res = await fetch("/api/register", {
+  const res = await fetch("http://backend-api.com:3001/api/users/Register", {
     method: "POST",
     body: data,
   });
@@ -16,7 +16,7 @@ export async function registerUser(formData) {
 //--------------------------------------------------------------------------
 
 export async function loginUser(credentials) {
-  const res = await fetch("/api/login", {
+  const res = await fetch("http://backend-api.com:3001/api/users/Login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

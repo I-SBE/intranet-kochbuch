@@ -28,10 +28,8 @@ function Login() {
     try {
       const { ok, data } = await loginUser(formData);
 
-      if (ok && data.token) {
-        localStorage.setItem("token", data.token);
+      if (ok && data.user) {
         setMessage("Login erfolgreich!");
-
         setTimeout(() => navigate("/"), 1000);
       } else {
         setMessage(data.message || "Login fehlgeschlagen.");

@@ -2,15 +2,18 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import { pool } from '../db/db.js';
 import { isAuthenticated } from '../middleware/auth.js';
+import multer from 'multer';
 
 //--------------------------------------------------------------------------
 
 const router = express.Router();
+const profile_pics = multer({ dest: 'profile_pics/' });
 
 //--------------------------------------------------------------------------
 
-router.post('/register', async (req, res) => {
-  const { firstName, lastName, email, password, image_url } = req.body;
+router.post('/register', profile_pics.single("image"), async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+  const image_url = req.file ? req.file.filename : null;
 
   if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });

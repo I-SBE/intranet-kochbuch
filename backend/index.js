@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
 
 app.use('/api/recipes', recipesRouter);
 app.use('/api/users', usersRouter);
+app.use('/profile_pics', express.static('profile_pics'));
 
 //--------------------------------------------------------------------------
 
