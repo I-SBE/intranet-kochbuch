@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-//--------------------------------------------------------------------------
-
 import { validatePassword, validateMatchingPasswords } from "../utils/validation";
 import { registerUser } from "../api-services/auth";
 import "./Register.css";
@@ -68,7 +66,7 @@ function Register() {
           image: null 
         });
         setPreview(null);
-        
+
         setTimeout(() => navigate("/login"), 1500);
       } else {
         setMessage(data.message || "Registrierung fehlgeschlagen.");
