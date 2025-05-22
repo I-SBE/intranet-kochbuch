@@ -69,10 +69,7 @@ router.post('/login', async (req, res) => {
     // Important (Don't send the Password)
     delete user.password;
 
-    res.status(200).json({
-      message: 'Login erfolgreich.',
-      user
-    });
+    res.status(200).json({ user: req.session.user });
 
   } catch (err) {
     console.error('Login-Fehler:', err);
@@ -93,6 +90,24 @@ router.get('/logout', (req, res) => {
     res.json({ message: 'Erfolgreich ausgeloggt.' });
   });
 });
+
+//--------------------------------------------------------------------------
+
+router.get('/me', isAuthenticated, async (req, res) => {
+  try {
+    const users = await pool.query('SELECT id, firstName, lastName, email, image_url, created_at FROM users WHERE id = ?', [req.session.user.id]);
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
+    }
+
+    res.status(200).json({ user: users[0] });
+  } catch (err) {
+    console.error('Fehler bei /me:', err);
+    res.status(500).json({ message: 'Fehler beim Abrufen der Benutzerdaten.' });
+  }
+});
+
 
 //--------------------------------------------------------------------------
 
