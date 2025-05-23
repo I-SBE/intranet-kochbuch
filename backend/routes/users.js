@@ -120,8 +120,8 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const [recipes] = await pool.query(
-      'SELECT id, title, description, image_url, created_at FROM recipes WHERE user_id = ?',
+    const recipes = await pool.query(
+      'SELECT id, title, ingredients, steps, created_at FROM recipes WHERE user_id = ?',
       [userId]
     );
 

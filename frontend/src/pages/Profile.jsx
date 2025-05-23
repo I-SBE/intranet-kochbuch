@@ -1,29 +1,56 @@
 import { useEffect, useState } from "react";
-import { Container, Image, Spinner, Alert } from "react-bootstrap";
+import { Container, Image, Spinner, Alert, Card, Row, Col } from "react-bootstrap";
 import { fetchUserProfile } from "../api-services/auth";
 
 //--------------------------------------------------------------------------
 
 function Profile() {
   const [user, setUser] = useState(null);
+  const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [recipeError, setRecipeError] = useState("");
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
-  async function fetchUser() {
+    async function fetchUser() {
       try {
-          const { ok, data } = await fetchUserProfile();
-          if (!ok) throw new Error(data.message);
-          setUser(data.user);
-        } catch (err) {
-          setError(err.message || "Fehler beim Laden des Profils.");
-        } finally {
-          setLoading(false);
-        }
+        const { ok, data } = await fetchUserProfile();
+        if (!ok) throw new Error(data.message);
+        setUser(data.user);
+      } catch (err) {
+        setError(err.message || "Fehler beim Laden des Profils.");
+      } finally {
+        setLoading(false);
+      }
     }
+
+    async function fetchUserRecipes() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://backend-api.com:3001/api/users/my-recipes", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.message || "Fehler beim Laden deiner Rezepte.");
+        }
+
+        const data = await response.json();
+        console.log("DATA RECEIVED:", data);
+        setRecipes(Array.isArray(data.recipes) ? data.recipes : []);
+      } catch (err) {
+        console.error("Fehler beim Laden der Rezepte:", err);
+        setRecipeError("Fehler beim Laden deiner Rezepte.");
+      }
+    }
+
     fetchUser();
+    fetchUserRecipes();
   }, []);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,14 +73,38 @@ function Profile() {
           <h3>{user.firstName} {user.lastName}</h3>
           <p className="mb-1">{user.email}</p>
           <small className="text-muted">
-            Mitglied seit 
+            Mitglied seit{" "}
             {new Date(user.created_at).toLocaleDateString(
-              'de-DE', 
-              {year: 'numeric', month: 'long', day: 'numeric'})
-            }
+              "de-DE",
+              { year: "numeric", month: "long", day: "numeric" }
+            )}
           </small>
         </div>
       </div>
+
+      <h4 className="mb-3">Meine Rezepte</h4>
+      {recipeError && <Alert variant="warning">{recipeError}</Alert>}
+      {Array.isArray(recipes) && recipes.length === 0 ? (
+        <p>Du hast noch keine Rezepte veröffentlicht.</p>
+      ) : (
+        <Row>
+          {recipes.map(recipe => (
+            <Col md={6} key={recipe.id} className="mb-4">
+              <Card>
+                <Card.Body>
+                  <Card.Title>{recipe.title}</Card.Title>
+                  <Card.Text>
+                    <strong>Zutaten:</strong><br />
+                    {recipe.ingredients}<br /><br />
+                    <strong>Schritte:</strong><br />
+                    {recipe.steps}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 }
