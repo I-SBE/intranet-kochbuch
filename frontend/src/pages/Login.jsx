@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { loginUser } from "../api-services/auth";
 
 //--------------------------------------------------------------------------
 
-function Login() {
+function Login({ onLogin }) {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+
+  const location = useLocation();
+  const locationMessage = location.state?.message;
 
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -29,7 +32,7 @@ function Login() {
       const { ok, data } = await loginUser(formData);
 
       if (ok && data.user && data.token) {
-        localStorage.setItem("token", data.token);
+        onLogin(data.token);
         setMessage("Login erfolgreich!");
         setTimeout(() => navigate("/"), 1000);
       }else {
@@ -46,6 +49,12 @@ function Login() {
   return (
     <Container style={{ maxWidth: "400px", marginTop: "100px" }}>
       <h2 className="mb-4">Login</h2>
+
+      {locationMessage && (
+        <Alert variant="warning">
+          {locationMessage}
+        </Alert>
+      )}
 
       {message && (
         <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>

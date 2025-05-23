@@ -16,7 +16,6 @@ export function isAuthenticated(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
-    console.error("Token-Fehler:", err.message);
-    return res.status(403).json({ message: 'Token ungültig oder abgelaufen.' });
+    return res.status(401).json({ message: "Ungültiger Token." });
   }
 }

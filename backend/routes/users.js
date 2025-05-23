@@ -116,4 +116,22 @@ router.get('/me', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+router.get('/my-recipes', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [recipes] = await pool.query(
+      'SELECT id, title, description, image_url, created_at FROM recipes WHERE user_id = ?',
+      [userId]
+    );
+
+    res.status(200).json({ recipes });
+  } catch (err) {
+    console.error('Fehler beim Laden der eigenen Rezepte:', err);
+    res.status(500).json({ message: 'Fehler beim Laden der eigenen Rezepte.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 export default router;
