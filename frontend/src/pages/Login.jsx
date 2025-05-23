@@ -28,10 +28,11 @@ function Login() {
     try {
       const { ok, data } = await loginUser(formData);
 
-      if (ok && data.user) {
+      if (ok && data.user && data.token) {
+        localStorage.setItem("token", data.token);
         setMessage("Login erfolgreich!");
         setTimeout(() => navigate("/"), 1000);
-      } else {
+      }else {
         setMessage(data.message || "Login fehlgeschlagen.");
       }
     } catch (error) {

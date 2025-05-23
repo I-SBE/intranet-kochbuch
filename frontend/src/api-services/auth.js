@@ -27,3 +27,18 @@ export async function loginUser(credentials) {
   const result = await res.json();
   return { ok: res.ok, data: result };
 }
+
+//--------------------------------------------------------------------------
+
+export async function fetchUserProfile() {
+  const token = localStorage.getItem("token");
+  const res = await fetch("http://backend-api.com:3001/api/users/me", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const result = await res.json();
+  return { ok: res.ok, data: result };
+}

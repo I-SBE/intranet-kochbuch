@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import session from 'express-session';
 import dotenv from 'dotenv';
 
 
@@ -11,19 +10,11 @@ import usersRouter from './routes/users.js';
 
 dotenv.config();
 const app = express();
-app.use(cors());
-app.use(express.json());
-
-//--------------------------------------------------------------------------
-
-app.use(session({
-  secret: process.env.SESSION_KEY,
-  resave: false, // Don't resave session if not changed
-  saveUninitialized: false, // Don't save if not Logged in
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 30
-  }
+app.use(cors({
+  origin: 'http://frontend.com:3000',
+  credentials: true
 }));
+app.use(express.json());
 
 //--------------------------------------------------------------------------
 

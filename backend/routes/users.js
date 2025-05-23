@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { pool } from '../db/db.js';
 import { isAuthenticated } from '../middleware/auth.js';
 import multer from 'multer';
+import jwt from 'jsonwebtoken';
 
 //--------------------------------------------------------------------------
 
@@ -63,16 +64,25 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Ungültige E-Mail oder Passwort.' });
     }
 
-    req.session.user = {
-      id: user.id,
-      firstName: user.firstName,
-      email: user.email
-    };
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_KEY,
+      { expiresIn: '30d' }
+    );
 
     // Important (Don't send the Password)
     delete user.password;
 
-    res.status(200).json({ user: req.session.user });
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        image_url: user.image_url,
+      }
+    });
 
   } catch (err) {
     console.error('Login-Fehler:', err);
@@ -83,22 +93,14 @@ router.post('/login', async (req, res) => {
 //--------------------------------------------------------------------------
 
 router.get('/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      console.error('Fehler beim Logout:', err);
-      return res.status(500).json({ message: 'Fehler beim Logout.' });
-    }
-
-    res.clearCookie('connect.sid');
-    res.json({ message: 'Erfolgreich ausgeloggt.' });
-  });
+  rres.json({ message: 'Logout erfolgreich.' });
 });
 
 //--------------------------------------------------------------------------
 
 router.get('/me', isAuthenticated, async (req, res) => {
   try {
-    const users = await pool.query('SELECT id, firstName, lastName, email, image_url, created_at FROM users WHERE id = ?', [req.session.user.id]);
+    const users = await pool.query('SELECT id, firstName, lastName, email, image_url, created_at FROM users WHERE id = ?', [req.user.id]);
 
     if (users.length === 0) {
       return res.status(404).json({ message: 'Benutzer nicht gefunden.' });

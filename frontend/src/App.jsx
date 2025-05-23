@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Recipes from "./pages/Recipes";
+import Profile from "./pages/Profile";
 
 //--------------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ function App() {
               <Nav.Link as={Link} to="/">Recipes</Nav.Link>
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
               <Nav.Link as={Link} to="/register">Register</Nav.Link>
+              <Nav.Link as={Link} to="/profile">Profil</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -37,6 +39,7 @@ function App() {
         <Route path="/" element={<Recipes />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );
