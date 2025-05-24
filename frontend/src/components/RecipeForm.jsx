@@ -21,7 +21,6 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       setSteps(initialData.steps || "");
       if (Array.isArray(initialData.images)) {
         const previews = initialData.images.map(img => `http://backend-api.com:3001/uploads/${img}`);
-        setPreviewImages(previews);
       }
     }
   }, [mode, initialData]);

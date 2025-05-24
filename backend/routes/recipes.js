@@ -157,4 +157,185 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+router.put('/:id/images/:oldImageName', isAuthenticated, upload.single('newImage'), async (req, res) => {
+  const { id, oldImageName } = req.params;
+  const user_id = req.user.id;
+
+  try {
+    const recipeCheck = await pool.query(
+      'SELECT * FROM recipes WHERE id = ? AND user_id = ?',
+      [id, user_id]
+    );
+
+    if (recipeCheck.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+    }
+
+    const imageCheck = await pool.query(
+      'SELECT * FROM recipe_images WHERE recipe_id = ? AND image_url = ?',
+      [id, oldImageName]
+    );
+
+    if (imageCheck.length === 0) {
+      return res.status(404).json({ message: 'Bild nicht gefunden.' });
+    }
+
+    const fs = await import('fs');
+    const path = `uploads/${oldImageName}`;
+    if (fs.existsSync(path)) fs.unlinkSync(path);
+
+    await pool.query(
+      'DELETE FROM recipe_images WHERE recipe_id = ? AND image_url = ?',
+      [id, oldImageName]
+    );
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Keine neue Bilddatei hochgeladen.' });
+    }
+
+    // Slugify title
+    const title = recipeCheck[0].title || 'rezept';
+    const slugify = (str) => {
+      return str
+        .toLowerCase()
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    };
+
+    const ext = req.file.originalname.split('.').pop();
+    const slug = slugify(title);
+    const newImageName = `${slug}-user${user_id}-${Date.now()}.${ext}`;
+
+    // Rename the file
+    const oldPath = req.file.path;
+    const newPath = `uploads/${newImageName}`;
+    fs.renameSync(oldPath, newPath);
+
+    await pool.query(
+      'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
+      [id, newImageName]
+    );
+
+    res.json({
+      message: 'Bild erfolgreich ersetzt.',
+      newImageName: newImageName
+    });
+
+  } catch (err) {
+    console.error('Fehler beim Ersetzen des Bildes:', err);
+    res.status(500).json({ message: 'Serverfehler beim Bildersetzen.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.delete('/:id/images/:imageName', isAuthenticated, async (req, res) => {
+  const { id, imageName } = req.params;
+  const user_id = req.user.id;
+
+  try {
+    const recipeCheck = await pool.query(
+      'SELECT * FROM recipes WHERE id = ? AND user_id = ?',
+      [id, user_id]
+    );
+
+    if (recipeCheck.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+    }
+
+    const imageCheck = await pool.query(
+      'SELECT * FROM recipe_images WHERE recipe_id = ? AND image_url = ?',
+      [id, imageName]
+    );
+
+    if (imageCheck.length === 0) {
+      return res.status(404).json({ message: 'Bild nicht gefunden.' });
+    }
+
+    const fs = await import('fs');
+    const path = `uploads/${imageName}`;
+    if (fs.existsSync(path)) {
+      fs.unlinkSync(path);
+    }
+
+    await pool.query(
+      'DELETE FROM recipe_images WHERE recipe_id = ? AND image_url = ?',
+      [id, imageName]
+    );
+
+    res.status(200).json({ message: 'Bild erfolgreich gelöscht.' });
+
+  } catch (err) {
+    console.error('Fehler beim Löschen des Bildes:', err);
+    res.status(500).json({ message: 'Serverfehler beim Bildlöschen.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.post('/:id/images', isAuthenticated, upload.array('images', 10), async (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+  const files = req.files || [];
+
+  try {
+    const recipeCheck = await pool.query(
+      'SELECT * FROM recipes WHERE id = ? AND user_id = ?',
+      [id, user_id]
+    );
+
+    if (recipeCheck.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+    }
+
+    const title = recipeCheck[0].title || 'rezept';
+
+    const slugify = (str) => {
+      return str
+        .toLowerCase()
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    };
+
+    const newImages = [];
+
+    for (const file of files) {
+      const ext = file.originalname.split('.').pop();
+      const slug = slugify(title);
+      const newFileName = `${slug}-user${user_id}-${Date.now()}-${Math.floor(Math.random() * 1000)}.${ext}`;
+
+      const fs = await import('fs');
+      const oldPath = file.path;
+      const newPath = `uploads/${newFileName}`;
+      fs.renameSync(oldPath, newPath);
+
+      await pool.query(
+        'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
+        [id, newFileName]
+      );
+
+      newImages.push(newFileName);
+    }
+
+    res.status(200).json({
+      message: 'Bilder erfolgreich hinzugefügt.',
+      newImages
+    });
+
+  } catch (err) {
+    console.error('Fehler beim Hochladen der Bilder:', err);
+    res.status(500).json({ message: 'Fehler beim Hochladen.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 export default router;

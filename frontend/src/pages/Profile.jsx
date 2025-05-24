@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Image, Spinner, Alert, Card, Row, Col, Button, Carousel } from "react-bootstrap";
 
 import { fetchUserProfile } from "../api-services/auth";
@@ -14,6 +15,8 @@ function Profile() {
   const [error, setError] = useState("");
   const [recipeError, setRecipeError] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  const navigate = useNavigate();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -107,29 +110,51 @@ function Profile() {
         <Row>
           {recipes.map(recipe => (
             <Col md={6} key={recipe.id} className="mb-4">
-              <Card>
+              <Card onClick={() => navigate(`/recipe/${recipe.id}`)} style={{ cursor: "pointer" , position: "relative" }}>
+                <Button
+                  variant="light"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/edit-recipe/${recipe.id}`);
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    borderRadius: "50%",
+                    width: "32px",
+                    height: "32px",
+                    padding: "0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 2
+                  }}
+                >✏️</Button>
                 {Array.isArray(recipe.images) && recipe.images.length > 0 ? (
-                <Carousel interval={null} indicators={recipe.images.length > 1}>
-                  {recipe.images.map((img, idx) => (
-                    <Carousel.Item key={idx}>
-                      <img
-                        src={`http://backend-api.com:3001/uploads/${img}`}
-                        alt={`Bild ${idx + 1}`}
-                        style={{
-                          height: "300px",
-                          objectFit: "cover",
-                          borderRadius: "8px"
-                        }}
-                      />
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              ) : (
-                <img
-                  src="http://backend-api.com:3001/uploads/default-recipe.png"
-                  alt="default-pic"
-                />
-              )}
+                  <Carousel interval={null} indicators={recipe.images.length > 1}>
+                    {recipe.images.map((img, idx) => (
+                      <Carousel.Item key={idx}>
+                        <img
+                          src={`http://backend-api.com:3001/uploads/${img}`}
+                          alt={`Bild ${idx + 1}`}
+                          className="d-block w-100"
+                          style={{
+                            height: "auto",
+                            objectFit: "cover",
+                            borderRadius: "8px"
+                          }}
+                        />
+                      </Carousel.Item>
+                    ))}
+                  </Carousel>
+                ) : (
+                  <img
+                    src="http://backend-api.com:3001/uploads/default-recipe.png"
+                    alt="default-pic"
+                  />
+                )}
 
                 <Card.Body>
                   <Card.Title>{recipe.title}</Card.Title>
