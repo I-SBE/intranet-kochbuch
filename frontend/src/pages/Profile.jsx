@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Image, Spinner, Alert, Card, Row, Col, Button } from "react-bootstrap";
+import { Container, Image, Spinner, Alert, Card, Row, Col, Button, Carousel } from "react-bootstrap";
 
 import { fetchUserProfile } from "../api-services/auth";
 import RecipeForm from "../components/RecipeForm";
@@ -39,6 +39,8 @@ function Profile() {
     }
   };
 
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -60,6 +62,8 @@ function Profile() {
 
   if (loading) return <Spinner animation="border" className="mt-5" />;
   if (error) return <Alert variant="danger" className="mt-5">{error}</Alert>;
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
     <Container style={{ maxWidth: "800px", marginTop: "100px" }}>
@@ -104,13 +108,24 @@ function Profile() {
           {recipes.map(recipe => (
             <Col md={6} key={recipe.id} className="mb-4">
               <Card>
-                {recipe.image_url && (
-                  <Card.Img
-                    variant="top"
-                    src={`http://backend-api.com:3001/uploads/${recipe.image_url}`}
-                    style={{ height: "200px", objectFit: "cover" }}
-                    alt={recipe.title}
-                  />
+                {Array.isArray(recipe.images) && recipe.images.length > 0 && (
+                  <Carousel interval={null} indicators={recipe.images.length > 1}>
+                    {recipe.images.map((img, idx) => (
+                      <Carousel.Item key={idx}>
+                        <img
+                          src={`http://backend-api.com:3001/uploads/${img}`}
+                          alt={`Bild ${idx + 1}`}
+                          className="d-block w-100"
+                          style={{
+                            height: "250px",
+                            objectFit: "cover",
+                            borderTopLeftRadius: "8px",
+                            borderTopRightRadius: "8px"
+                          }}
+                        />
+                      </Carousel.Item>
+                    ))}
+                  </Carousel>
                 )}
                 <Card.Body>
                   <Card.Title>{recipe.title}</Card.Title>

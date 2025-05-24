@@ -125,6 +125,14 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
       [userId]
     );
 
+    for (const recipe of recipes) {
+      const images = await pool.query(
+        'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
+        [recipe.id]
+      );
+      recipe.images = images.map(img => img.image_url);
+    }
+
     res.status(200).json({ recipes });
   } catch (err) {
     console.error('Fehler beim Laden der eigenen Rezepte:', err);

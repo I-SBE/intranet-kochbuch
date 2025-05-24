@@ -4,11 +4,12 @@ import { Form, Button, Alert } from "react-bootstrap";
 //--------------------------------------------------------------------------
 
 function RecipeForm({ onRecipeAdded }) {
-    
+
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [steps, setSteps] = useState("");
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -28,7 +29,12 @@ function RecipeForm({ onRecipeAdded }) {
     formData.append("title", title);
     formData.append("ingredients", ingredients);
     formData.append("steps", steps);
-    if (image) formData.append("image", image);
+
+    if (images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append("images", images[i]);
+      }
+    }
 
     try {
       const token = localStorage.getItem("token");
@@ -50,7 +56,9 @@ function RecipeForm({ onRecipeAdded }) {
       setTitle("");
       setIngredients("");
       setSteps("");
-      setImage(null);
+      setImages([]);
+      setPreviewImages([]);
+
       if (onRecipeAdded) onRecipeAdded();
 
     } catch (err) {
@@ -59,6 +67,8 @@ function RecipeForm({ onRecipeAdded }) {
     }
   };
 
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   return (
     <Form onSubmit={handleSubmit} className="mb-5">
       <h4 className="mb-3">➕ Neues Rezept hinzufügen</h4>
@@ -66,20 +76,45 @@ function RecipeForm({ onRecipeAdded }) {
       {success && <Alert variant="success">{success}</Alert>}
 
       <Form.Group className="mb-3">
-      <Form.Label>Bild (optional)</Form.Label>
-      <Form.Control
-        type="file"
-        accept="image/*"
-        onChange={(e) => setImage(e.target.files[0])}
-      />
+        <Form.Label>Bilder (optional)</Form.Label>
+        <Form.Control
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => {
+            const files = Array.from(e.target.files);
+            setImages(files);
+            const previews = files.map(file => URL.createObjectURL(file));
+            setPreviewImages(previews);
+          }}
+        />
       </Form.Group>
+
+      {previewImages.length > 0 && (
+        <div className="mb-3 d-flex flex-wrap gap-3">
+          {previewImages.map((src, idx) => (
+            <img
+              key={idx}
+              src={src}
+              alt={`preview-${idx}`}
+              style={{
+                width: "120px",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                border: "1px solid #ccc"
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <Form.Group className="mb-3">
         <Form.Label>Titel</Form.Label>
         <Form.Control
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)} // ✅ إصلاح onChange
         />
       </Form.Group>
 
@@ -103,7 +138,7 @@ function RecipeForm({ onRecipeAdded }) {
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit">Post</Button>
+      <Button variant="primary" type="submit">Veröffentlichen</Button>
     </Form>
   );
 }

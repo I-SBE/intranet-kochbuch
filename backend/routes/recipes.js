@@ -33,10 +33,10 @@ router.get('/', async (req, res) => {
 
 //--------------------------------------------------------------------------
 
-router.post('/', isAuthenticated, upload.single('image'), async (req, res) => {
+router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) => {
   const { title, ingredients, steps } = req.body;
   const user_id = req.user.id;
-  const image_url = req.file ? req.file.filename : null;
+  const files = req.files || [];
 
   if (!title || !ingredients || !steps) {
     return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });
@@ -50,10 +50,10 @@ router.post('/', isAuthenticated, upload.single('image'), async (req, res) => {
 
     const recipe_id = result.insertId;
 
-    if (image_url) {
+    for (const file of files) {
       await pool.query(
-        'INSERT INTO recipe_images (recipe_id, image_url, created_at) VALUES (?, ?, NOW())',
-        [recipe_id, image_url]
+        'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
+        [recipe_id, file.filename]
       );
     }
 
@@ -70,13 +70,22 @@ router.get('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const rows = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
+    const recipeRows = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
 
-    if (rows.length === 0) {
+    if (recipeRows.length === 0) {
       return res.status(404).json({ message: 'Rezept wurde nicht gefunden.' });
     }
 
-    res.json(rows[0]);
+    const recipe = recipeRows[0];
+
+    const images = await pool.query(
+      'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
+      [id]
+    );
+
+    recipe.images = images.map(img => img.image_url);
+
+    res.json(recipe);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Fehler beim Abrufen des Rezepts.' });
