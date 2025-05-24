@@ -108,25 +108,29 @@ function Profile() {
           {recipes.map(recipe => (
             <Col md={6} key={recipe.id} className="mb-4">
               <Card>
-                {Array.isArray(recipe.images) && recipe.images.length > 0 && (
-                  <Carousel interval={null} indicators={recipe.images.length > 1}>
-                    {recipe.images.map((img, idx) => (
-                      <Carousel.Item key={idx}>
-                        <img
-                          src={`http://backend-api.com:3001/uploads/${img}`}
-                          alt={`Bild ${idx + 1}`}
-                          className="d-block w-100"
-                          style={{
-                            height: "250px",
-                            objectFit: "cover",
-                            borderTopLeftRadius: "8px",
-                            borderTopRightRadius: "8px"
-                          }}
-                        />
-                      </Carousel.Item>
-                    ))}
-                  </Carousel>
-                )}
+                {Array.isArray(recipe.images) && recipe.images.length > 0 ? (
+                <Carousel interval={null} indicators={recipe.images.length > 1}>
+                  {recipe.images.map((img, idx) => (
+                    <Carousel.Item key={idx}>
+                      <img
+                        src={`http://backend-api.com:3001/uploads/${img}`}
+                        alt={`Bild ${idx + 1}`}
+                        style={{
+                          height: "300px",
+                          objectFit: "cover",
+                          borderRadius: "8px"
+                        }}
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              ) : (
+                <img
+                  src="http://backend-api.com:3001/uploads/default-recipe.png"
+                  alt="default-pic"
+                />
+              )}
+
                 <Card.Body>
                   <Card.Title>{recipe.title}</Card.Title>
                   <Card.Text>

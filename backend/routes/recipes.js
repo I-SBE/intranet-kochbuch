@@ -23,8 +23,17 @@ const upload = multer({ storage });
 
 router.get('/', async (req, res) => {
   try {
-    const rows = await pool.query('SELECT * FROM recipes');
-    res.json(rows);
+    const recipes = await pool.query('SELECT * FROM recipes');
+
+    for (let recipe of recipes) {
+      const images = await pool.query(
+        'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
+        [recipe.id]
+      );
+      recipe.images = images.map(img => img.image_url);
+    }
+
+    res.json(recipes);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Fehler beim Abrufen der Rezepte' });

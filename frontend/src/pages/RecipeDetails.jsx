@@ -6,7 +6,7 @@ import { fetchUserProfile } from "../api-services/auth";
 
 //--------------------------------------------------------------------------
 
-export default function RecipeDetails() {
+function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
@@ -75,16 +75,15 @@ export default function RecipeDetails() {
         </div>
       )}
 
-      {Array.isArray(recipe.images) && recipe.images.length > 0 && (
+      {Array.isArray(recipe.images) && recipe.images.length > 0 ? (
         <Carousel interval={null} indicators={recipe.images.length > 1} className="mb-4">
           {recipe.images.map((img, idx) => (
             <Carousel.Item key={idx}>
               <img
                 src={`http://backend-api.com:3001/uploads/${img}`}
                 alt={`Bild ${idx + 1}`}
-                className="d-block w-100"
                 style={{
-                  height: "300px",
+                  height: "500px",
                   objectFit: "cover",
                   borderRadius: "8px"
                 }}
@@ -92,6 +91,16 @@ export default function RecipeDetails() {
             </Carousel.Item>
           ))}
         </Carousel>
+      ) : (
+        <img
+          src={`http://backend-api.com:3001/uploads/default-recipe.png`}
+          alt="default-pic"
+          style={{
+            height: "500px",
+            objectFit: "cover",
+            borderRadius: "8px"
+          }}
+        />
       )}
 
       <h5 className="mt-4">Zutaten:</h5>
@@ -106,3 +115,7 @@ export default function RecipeDetails() {
     </Container>
   );
 }
+
+//--------------------------------------------------------------------------
+
+export default RecipeDetails;
