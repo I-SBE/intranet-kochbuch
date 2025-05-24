@@ -46,8 +46,9 @@ function RecipeGallery() {
                       <img
                         src={`http://backend-api.com:3001/uploads/${img}`}
                         alt={`Bild ${idx + 1}`}
+                        className="d-block w-100"
                         style={{
-                          height: "300px",
+                          height: "auto",
                           objectFit: "cover",
                           borderRadius: "8px"
                         }}
