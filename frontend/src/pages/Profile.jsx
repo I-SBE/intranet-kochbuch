@@ -1,17 +1,43 @@
 import { useEffect, useState } from "react";
-import { Container, Image, Spinner, Alert, Card, Row, Col } from "react-bootstrap";
+import { Container, Image, Spinner, Alert, Card, Row, Col, Button } from "react-bootstrap";
+
 import { fetchUserProfile } from "../api-services/auth";
+import RecipeForm from "../components/RecipeForm";
 
 //--------------------------------------------------------------------------
 
 function Profile() {
+
   const [user, setUser] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [recipeError, setRecipeError] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  const fetchUserRecipes = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://backend-api.com:3001/api/users/my-recipes", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Fehler beim Laden deiner Rezepte.");
+      }
+
+      const data = await response.json();
+      setRecipes(Array.isArray(data.recipes) ? data.recipes : []);
+    } catch (err) {
+      console.error("Fehler beim Laden der Rezepte:", err);
+      setRecipeError("Fehler beim Laden deiner Rezepte.");
+    }
+  };
 
   useEffect(() => {
     async function fetchUser() {
@@ -23,29 +49,6 @@ function Profile() {
         setError(err.message || "Fehler beim Laden des Profils.");
       } finally {
         setLoading(false);
-      }
-    }
-
-    async function fetchUserRecipes() {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch("http://backend-api.com:3001/api/users/my-recipes", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.message || "Fehler beim Laden deiner Rezepte.");
-        }
-
-        const data = await response.json();
-        console.log("DATA RECEIVED:", data);
-        setRecipes(Array.isArray(data.recipes) ? data.recipes : []);
-      } catch (err) {
-        console.error("Fehler beim Laden der Rezepte:", err);
-        setRecipeError("Fehler beim Laden deiner Rezepte.");
       }
     }
 
@@ -82,6 +85,16 @@ function Profile() {
         </div>
       </div>
 
+      <Button
+        variant={showForm ? "outline-danger" : "outline-primary"}
+        className="mb-4"
+        onClick={() => setShowForm(!showForm)}
+      >
+        {showForm ? "Zurück" : "Rezept veröffentlichen"}
+      </Button>
+
+      {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
+
       <h4 className="mb-3">Meine Rezepte</h4>
       {recipeError && <Alert variant="warning">{recipeError}</Alert>}
       {Array.isArray(recipes) && recipes.length === 0 ? (
@@ -91,6 +104,14 @@ function Profile() {
           {recipes.map(recipe => (
             <Col md={6} key={recipe.id} className="mb-4">
               <Card>
+                {recipe.image_url && (
+                  <Card.Img
+                    variant="top"
+                    src={`http://backend-api.com:3001/uploads/${recipe.image_url}`}
+                    style={{ height: "200px", objectFit: "cover" }}
+                    alt={recipe.title}
+                  />
+                )}
                 <Card.Body>
                   <Card.Title>{recipe.title}</Card.Title>
                   <Card.Text>
