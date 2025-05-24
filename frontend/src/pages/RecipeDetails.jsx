@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Spinner, Alert, Carousel } from "react-bootstrap";
+import { Container, Spinner, Alert, Carousel, Button, Modal } from "react-bootstrap";
+
+import { fetchUserProfile } from "../api-services/auth";
 
 //--------------------------------------------------------------------------
 
@@ -9,6 +11,9 @@ export default function RecipeDetails() {
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -22,25 +27,28 @@ export default function RecipeDetails() {
       return;
     }
 
-    fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          navigate("/login", {
-            state: { message: "Ihre Sitzung ist abgelaufen. Bitte erneut anmelden." },
-          });
-          return null;
+    const fetchData = async () => {
+      try {
+        const [recipeRes, userRes] = await Promise.all([
+          fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetchUserProfile()
+        ]);
+
+        if (!recipeRes.ok) throw new Error("Fehler beim Abrufen des Rezepts.");
+        const recipeData = await recipeRes.json();
+        setRecipe(recipeData);
+
+        if (userRes.ok) {
+          setCurrentUser(userRes.data.user);
         }
-        if (!res.ok) throw new Error("Fehler beim Abrufen des Rezepts.");
-        return res.json();
-      })
-      .then((data) => {
-        if (data) setRecipe(data);
-      })
-      .catch((err) => setError(err.message));
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchData();
   }, [id, navigate]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,6 +66,14 @@ export default function RecipeDetails() {
   return (
     <Container style={{ maxWidth: "800px", marginTop: "80px" }}>
       <h1 className="mb-3">{recipe.title}</h1>
+
+      {currentUser?.id === recipe.user_id && (
+        <div className="d-flex gap-2 mb-3">
+          <Button variant="outline-secondary" onClick={() => navigate(`/edit-recipe/${recipe.id}`)}>
+            Bearbeiten
+          </Button>
+        </div>
+      )}
 
       {Array.isArray(recipe.images) && recipe.images.length > 0 && (
         <Carousel interval={null} indicators={recipe.images.length > 1} className="mb-4">

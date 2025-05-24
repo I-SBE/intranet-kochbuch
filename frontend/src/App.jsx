@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import RecipeGallery from './pages/RecipeGallery';
 import RecipeDetails from './pages/RecipeDetails';
+import EditRecipe from "./pages/EditRecipe";
 
 //--------------------------------------------------------------------------
 
@@ -65,6 +66,7 @@ function App() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
       </Routes>
     </>
   );

@@ -57,7 +57,7 @@ router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) =
       );
     }
 
-    res.status(201).json({ message: 'Rezept erfolgreich gespeichert.', recipe_id });
+    res.status(201).json({ message: 'Rezept erfolgreich gespeichert.', recipe_id: Number(recipe_id) });
   } catch (err) {
     console.error('Fehler beim Speichern des Rezepts:', err);
     res.status(500).json({ message: 'Fehler beim Speichern.' });
@@ -89,6 +89,60 @@ router.get('/:id', isAuthenticated, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Fehler beim Abrufen des Rezepts.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.put('/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const { title, ingredients, steps } = req.body;
+  const user_id = req.user.id;
+
+  if (!title || !ingredients || !steps) {
+    return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });
+  }
+
+  try {
+    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+
+    if (existing.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+    }
+
+    await pool.query(
+      'UPDATE recipes SET title = ?, ingredients = ?, steps = ? WHERE id = ? AND user_id = ?',
+      [title, ingredients, steps, id, user_id]
+    );
+
+    res.status(200).json({ message: 'Rezept erfolgreich aktualisiert.' });
+  } catch (err) {
+    console.error('Fehler beim Aktualisieren des Rezepts:', err);
+    res.status(500).json({ message: 'Fehler beim Aktualisieren.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.delete('/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+
+  try {
+    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+
+    if (existing.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+    }
+
+    await pool.query('DELETE FROM recipe_images WHERE recipe_id = ?', [id]);
+
+    await pool.query('DELETE FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+
+    res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
+  } catch (err) {
+    console.error('Fehler beim Löschen des Rezepts:', err);
+    res.status(500).json({ message: 'Fehler beim Löschen.' });
   }
 });
 

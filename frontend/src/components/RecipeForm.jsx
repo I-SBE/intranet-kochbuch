@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 
 //--------------------------------------------------------------------------
 
-function RecipeForm({ onRecipeAdded }) {
-
+function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {} }) {
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [steps, setSteps] = useState("");
@@ -12,6 +11,20 @@ function RecipeForm({ onRecipeAdded }) {
   const [previewImages, setPreviewImages] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  useEffect(() => {
+    if (mode === "edit" && initialData) {
+      setTitle(initialData.title || "");
+      setIngredients(initialData.ingredients || "");
+      setSteps(initialData.steps || "");
+      if (Array.isArray(initialData.images)) {
+        const previews = initialData.images.map(img => `http://backend-api.com:3001/uploads/${img}`);
+        setPreviewImages(previews);
+      }
+    }
+  }, [mode, initialData]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -25,15 +38,19 @@ function RecipeForm({ onRecipeAdded }) {
       return;
     }
 
+    if (mode === "edit" && onSubmit) {
+      const updatedData = { title, ingredients, steps };
+      await onSubmit(updatedData);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("ingredients", ingredients);
     formData.append("steps", steps);
 
-    if (images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
-      }
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
     }
 
     try {
@@ -46,10 +63,10 @@ function RecipeForm({ onRecipeAdded }) {
         body: formData
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Fehler beim Speichern der Rezept.");
+        throw new Error(result.message || "Fehler beim Speichern.");
       }
 
       setSuccess("Rezept erfolgreich gespeichert!");
@@ -62,7 +79,6 @@ function RecipeForm({ onRecipeAdded }) {
       if (onRecipeAdded) onRecipeAdded();
 
     } catch (err) {
-      console.error(err);
       setError(err.message || "Fehler beim Speichern.");
     }
   };
@@ -71,24 +87,29 @@ function RecipeForm({ onRecipeAdded }) {
 
   return (
     <Form onSubmit={handleSubmit} className="mb-5">
-      <h4 className="mb-3">➕ Neues Rezept hinzufügen</h4>
+      <h4 className="mb-3">
+        {mode === "edit" ? "bearbeiten" : "Neues hinzufügen"}
+      </h4>
+
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form.Group className="mb-3">
-        <Form.Label>Bilder (optional)</Form.Label>
-        <Form.Control
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => {
-            const files = Array.from(e.target.files);
-            setImages(files);
-            const previews = files.map(file => URL.createObjectURL(file));
-            setPreviewImages(previews);
-          }}
-        />
-      </Form.Group>
+      {mode === "create" && (
+        <Form.Group className="mb-3">
+          <Form.Label>Bilder (optional)</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              const files = Array.from(e.target.files);
+              setImages(files);
+              const previews = files.map(file => URL.createObjectURL(file));
+              setPreviewImages(previews);
+            }}
+          />
+        </Form.Group>
+      )}
 
       {previewImages.length > 0 && (
         <div className="mb-3 d-flex flex-wrap gap-3">
@@ -114,7 +135,7 @@ function RecipeForm({ onRecipeAdded }) {
         <Form.Control
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)} // ✅ إصلاح onChange
+          onChange={(e) => setTitle(e.target.value)}
         />
       </Form.Group>
 
@@ -138,9 +159,14 @@ function RecipeForm({ onRecipeAdded }) {
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit">Veröffentlichen</Button>
+      <Button variant="primary" type="submit">
+        {mode === "edit" ? "Speichern" : "Veröffentlichen"}
+      </Button>
+
     </Form>
   );
 }
+
+//--------------------------------------------------------------------------
 
 export default RecipeForm;
