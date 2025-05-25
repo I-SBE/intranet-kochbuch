@@ -52,4 +52,21 @@ CREATE TABLE IF NOT EXISTS recipe_images (
 
 -----------------------------------------------------
 
+-- 5. Create Table: comments
+
+CREATE TABLE IF NOT EXISTS comments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  recipe_id INT NOT NULL,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-----------------------------------------------------
+
+-- for the Import in DB:
+
 -- mysql -u root -p < db/fi37_sbeih_fpadw.sql
