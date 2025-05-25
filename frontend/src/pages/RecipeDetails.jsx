@@ -4,6 +4,12 @@ import { Container, Spinner, Alert, Carousel, Button } from "react-bootstrap";
 
 import { fetchUserProfile } from "../api-services/auth";
 
+import { format } from "timeago.js";
+import de from "timeago.js/lib/lang/de";
+import { register } from "timeago.js";
+
+register("de", de);
+
 //--------------------------------------------------------------------------
 
 function RecipeDetails() {
@@ -236,8 +242,7 @@ function RecipeDetails() {
               />
               <strong>{comment.firstName} {comment.lastName}</strong>
               <span className="ms-auto text-muted" style={{ fontSize: "0.8rem" }}>
-                {new Date(comment.created_at).toLocaleDateString("de-DE")}{" "}
-                {new Date(comment.created_at).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+                {format(comment.created_at, "de")}
                 {comment.updated_at && comment.updated_at !== comment.created_at && (
                   <span className="text-muted ms-2" style={{ fontSize: "0.75rem" }}>
                     (Bearbeitet)
