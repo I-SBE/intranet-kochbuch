@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import RecipeGallery from './pages/RecipeGallery';
 import RecipeDetails from './pages/RecipeDetails';
 import EditRecipe from "./pages/EditRecipe";
+import About from "./pages/About.jsx";
+import Kontakt from "./pages/Kontakt.jsx";
 
 //--------------------------------------------------------------------------
 
@@ -55,6 +57,9 @@ function App() {
                   <Nav.Link as={Link} to="/register">Register</Nav.Link>
                 </>
               )}
+              
+              <Nav.Link as={Link} to="/about">About</Nav.Link>
+              <Nav.Link as={Link} to="/kontakt">Kontakt</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -67,6 +72,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/kontakt" element={<Kontakt />} />
       </Routes>
     </>
   );

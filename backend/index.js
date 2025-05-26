@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import recipesRouter from './routes/recipes.js';
 import usersRouter from './routes/users.js';
 import commentRoutes from './routes/comments.js';
+import contactRouter from './routes/contact.js';
 
 //--------------------------------------------------------------------------
 
@@ -30,6 +31,7 @@ app.use('/api/users', usersRouter);
 app.use('/profile_pics', express.static('profile_pics'));
 app.use('/uploads', express.static('uploads'));
 app.use('/api/comments', commentRoutes);
+app.use("/api/contact", contactRouter);
 
 //--------------------------------------------------------------------------
 
