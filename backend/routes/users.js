@@ -142,4 +142,23 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+router.put("/update-profile", isAuthenticated, profile_pics.single("image"), async (req, res) => {
+  const { firstName, lastName, email } = req.body;
+  const image_url = req.file ? req.file.filename : req.body.image_url;
+  const userId = req.user.id;
+
+  try {
+    await pool.query(
+      "UPDATE users SET firstName = ?, lastName = ?, email = ?, image_url = ? WHERE id = ?",
+      [firstName, lastName, email, image_url, userId]
+    );
+    res.json({ message: "Profil erfolgreich aktualisiert." });
+  } catch (err) {
+    console.error("Update-Fehler:", err);
+    res.status(500).json({ message: "Fehler beim Aktualisieren des Profils." });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 export default router;

@@ -79,7 +79,7 @@ function Profile() {
           style={{ objectFit: "cover" }}
           alt="Profilbild"
         />
-        <div>
+        <div style={{ position: "relative" }}>
           <h3>{user.firstName} {user.lastName}</h3>
           <p className="mb-1">{user.email}</p>
           <small className="text-muted">
@@ -90,6 +90,14 @@ function Profile() {
             )}
           </small>
         </div>
+        <Button
+          variant="light"
+          size="sm"
+          onClick={() => navigate("/edit-profile")}
+          title="Profil bearbeiten"
+        >
+          ✏️
+        </Button>
       </div>
 
       <Button

@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import RecipeGallery from './pages/RecipeGallery';
 import RecipeDetails from './pages/RecipeDetails';
 import EditRecipe from "./pages/EditRecipe";
+import EditProfile from "./pages/EditProfile";
 import About from "./pages/About.jsx";
 import Kontakt from "./pages/Kontakt.jsx";
 
@@ -72,6 +73,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/about" element={<About />} />
         <Route path="/kontakt" element={<Kontakt />} />
       </Routes>
