@@ -93,7 +93,7 @@ router.post('/login', async (req, res) => {
 //--------------------------------------------------------------------------
 
 router.get('/logout', (req, res) => {
-  rres.json({ message: 'Logout erfolgreich.' });
+  res.json({ message: 'Logout erfolgreich.' });
 });
 
 //--------------------------------------------------------------------------
@@ -156,6 +156,43 @@ router.put("/update-profile", isAuthenticated, profile_pics.single("image"), asy
   } catch (err) {
     console.error("Update-Fehler:", err);
     res.status(500).json({ message: "Fehler beim Aktualisieren des Profils." });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.put("/change-password", isAuthenticated, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: "Beide Passwörter sind erforderlich." });
+  }
+
+  if (newPassword.length < 8) {
+    return res.status(400).json({ message: "Das neue Passwort muss mindestens 8 Zeichen lang sein." });
+  }
+
+  try {
+    const users = await pool.query("SELECT password FROM users WHERE id = ?", [userId]);
+    if (users.length === 0) {
+      return res.status(404).json({ message: "Benutzer nicht gefunden." });
+    }
+
+    const valid = await bcrypt.compare(currentPassword, users[0].password);
+    if (!valid) {
+      return res.status(401).json({ message: "Aktuelles Passwort ist falsch." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query("UPDATE users SET password = ? WHERE id = ?", [hashedNewPassword, userId]);
+
+    res.status(200).json({ message: "Passwort erfolgreich geändert." });
+
+  } catch (err) {
+    console.error("Fehler beim Passwort ändern:", err);
+    res.status(500).json({ message: "Serverfehler beim Ändern des Passworts." });
   }
 });
 

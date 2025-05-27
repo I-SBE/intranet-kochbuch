@@ -5,12 +5,16 @@ import { Container, Form, Button, Alert, Spinner } from "react-bootstrap";
 //--------------------------------------------------------------------------
 
 function EditProfile() {
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     image: null,
   });
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -18,7 +22,7 @@ function EditProfile() {
 
   const navigate = useNavigate();
 
-  //--------------------------------------------------------------------------
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,7 +49,7 @@ function EditProfile() {
       .finally(() => setLoading(false));
   }, []);
 
-  //--------------------------------------------------------------------------
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -58,7 +62,7 @@ function EditProfile() {
     }
   };
 
-  //--------------------------------------------------------------------------
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,7 +92,7 @@ function EditProfile() {
     }
   };
 
-  //--------------------------------------------------------------------------
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   if (loading) return <Spinner animation="border" className="mt-5" />;
 
@@ -160,10 +164,14 @@ function EditProfile() {
           />
         </Form.Group>
 
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="mb-3">
           Speichern
         </Button>
       </Form>
+      <div className="d-flex flex-column gap-2">
+        <Button className="mb-4" variant="outline-secondary" onClick={() => navigate("/change-password")}>Passwort ändern</Button>
+        <Button variant="outline-danger" onClick={() => navigate("/delete-account")}>Konto löschen</Button>
+      </div>
     </Container>
   );
 }
