@@ -18,6 +18,7 @@ import EditProfile from "./pages/EditProfile";
 import About from "./pages/About.jsx";
 import Kontakt from "./pages/Kontakt.jsx";
 import ChangePass from "./pages/ChangePassword.jsx";
+import DeleteAccount from "./pages/DeleteAccount.jsx";
 
 //--------------------------------------------------------------------------
 
@@ -78,6 +79,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/kontakt" element={<Kontakt />} />
         <Route path="/change-password" element={<ChangePass />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
       </Routes>
     </>
   );

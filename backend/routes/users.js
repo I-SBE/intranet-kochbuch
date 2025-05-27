@@ -198,4 +198,27 @@ router.put("/change-password", isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+router.delete("/delete-account", isAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    await pool.query(
+      `DELETE FROM recipe_images WHERE recipe_id IN 
+       (SELECT id FROM recipes WHERE user_id = ?)`, 
+      [userId]
+    );
+
+    await pool.query("DELETE FROM recipes WHERE user_id = ?", [userId]);
+
+    await pool.query("DELETE FROM users WHERE id = ?", [userId]);
+
+    res.status(200).json({ message: "Konto erfolgreich gelöscht." });
+  } catch (err) {
+    console.error("Fehler beim Konto löschen:", err);
+    res.status(500).json({ message: "Serverfehler beim Löschen des Kontos." });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 export default router;
