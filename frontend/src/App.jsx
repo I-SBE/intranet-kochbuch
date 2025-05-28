@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from "react-router-dom";
-import {Navbar, Nav, Container} from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { useAuth } from "./context/AuthContext";
 
 //--------------------------------------------------------------------------
 
@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 //--------------------------------------------------------------------------
 
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
@@ -19,68 +20,43 @@ import About from "./pages/About.jsx";
 import Kontakt from "./pages/Kontakt.jsx";
 import ChangePass from "./pages/ChangePassword.jsx";
 import DeleteAccount from "./pages/DeleteAccount.jsx";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 //--------------------------------------------------------------------------
 
 import './App.css'
 
 function App() {
+  const { login } = useAuth();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const navigate = useNavigate();
-
-  const handleLogin = (token) => {
+  const handleLogin = (token, userData) => {
     localStorage.setItem("token", token);
-    setIsLoggedIn(true);
+    login(token, userData);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    navigate("/");
-  };
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary fixed-top">
-        <Container>
-          <Navbar.Brand as={Link} to="/">Recipes</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">Recipes</Nav.Link>
-              {isLoggedIn ? (
-                <>
-                  <Nav.Link as={Link} to="/profile">Profil</Nav.Link>
-                  <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                </>
-              ) : (
-                <>
-                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                  <Nav.Link as={Link} to="/register">Register</Nav.Link>
-                </>
-              )}
-              
-              <Nav.Link as={Link} to="/about">About</Nav.Link>
-              <Nav.Link as={Link} to="/kontakt">Kontakt</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      <Routes>
-        <Route path="/" element={<RecipeGallery />} />
-        <Route path="/recipe/:id" element={<RecipeDetails />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/kontakt" element={<Kontakt />} />
-        <Route path="/change-password" element={<ChangePass />} />
-        <Route path="/delete-account" element={<DeleteAccount />} />
-      </Routes>
+      <Container fluid>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<RecipeGallery />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/kontakt" element={<Kontakt />} />
+          <Route path="/change-password" element={<ChangePass />} />
+          <Route path="/delete-account" element={<DeleteAccount />} />
+        </Routes>
+        <Footer />
+      </Container>
     </>
   );
 }

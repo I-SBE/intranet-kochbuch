@@ -1,7 +1,6 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
 }
 
@@ -34,9 +33,31 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1em;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.custom-nav-link {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #fff !important;
+  padding: 0.4rem 0.8rem;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.custom-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+  color: #ff8800 !important;
+  box-shadow: 0 8px 20px #ff8800;
+}
+
+footer {
+  border-top: 1px solid #444;
 }

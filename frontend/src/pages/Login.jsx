@@ -32,7 +32,7 @@ function Login({ onLogin }) {
       const { ok, data } = await loginUser(formData);
 
       if (ok && data.user && data.token) {
-        onLogin(data.token);
+        onLogin(data.token, data.user);
         setMessage("Login erfolgreich!");
         setTimeout(() => navigate("/"), 1000);
       }else {

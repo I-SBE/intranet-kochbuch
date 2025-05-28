@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { validatePassword, validateMatchingPasswords } from "../utils/validation";
 import { registerUser } from "../api-services/auth";
-import "./Register.css";
+import "./css/Register.css";
 
 //--------------------------------------------------------------------------
 
