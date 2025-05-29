@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
-import "./css/Kontakt.css";
+
+import "./css/FormLayout.css";
 
 //--------------------------------------------------------------------------
 
 function Kontakt() {
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: ""
   });
 
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   const [submitted, setSubmitted] = useState(false);
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,6 +45,8 @@ function Kontakt() {
       alert("Serverfehler.");
     }
   };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
     <div className="kontakt-container">

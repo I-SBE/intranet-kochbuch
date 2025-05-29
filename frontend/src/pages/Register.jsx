@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { validatePassword, validateMatchingPasswords } from "../utils/validation";
 import { registerUser } from "../api-services/auth";
-import "./css/Register.css";
+import "./css/FormLayout.css";
 
 //--------------------------------------------------------------------------
 
@@ -80,95 +80,97 @@ function Register() {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Container style={{ maxWidth: "500px", marginTop: "100px" }}>
-      <h2 className="mb-4">Benutzer registrieren</h2>
+    <div className="kontakt-container">
+      <div className="kontakt-card">
+        <h2 className="mb-4">Benutzer registrieren</h2>
 
-      {message && (
-        <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>
-          {message}
-        </Alert>
-      )}
+        {message && (
+          <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>
+            {message}
+          </Alert>
+        )}
 
-      <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
 
-        <div className="text-center mb-3">
-          <label htmlFor="image-upload">
-            <div
-              className="image-preview"
-              style={{ backgroundImage: `url(${preview || "/default-profile.png"})` }}
+          <div className="text-center mb-3">
+            <label htmlFor="image-upload">
+              <div
+                className="image-preview"
+                style={{ backgroundImage: `url(${preview || "/default-profile.png"})` }}
+              />
+            </label>
+            
+            <Form.Control
+              id="image-upload"
+              type="file"
+              name="image"
+              onChange={handleChange}
+              style={{ display: "none" }}
             />
-          </label>
-          
-          <Form.Control
-            id="image-upload"
-            type="file"
-            name="image"
-            onChange={handleChange}
-            style={{ display: "none" }}
-          />
-        </div>
+          </div>
 
 
-        <Form.Group className="mb-3" controlId="firstName">
-          <Form.Label>Vorname</Form.Label>
-          <Form.Control
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="firstName">
+            <Form.Label>Vorname</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="lastName">
-          <Form.Label>Nachname</Form.Label>
-          <Form.Control
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="lastName">
+            <Form.Label>Nachname</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>E-Mail</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="email">
+            <Form.Label>E-Mail</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Passwort</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="password">
+            <Form.Label>Passwort</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="confirmPassword">
-          <Form.Label>Passwort bestätigen</Form.Label>
-          <Form.Control
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="confirmPassword">
+            <Form.Label>Passwort bestätigen</Form.Label>
+            <Form.Control
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Registrieren
-        </Button>
-      </Form>
-    </Container>
+          <Button variant="primary" type="submit">
+            Registrieren
+          </Button>
+        </Form>
+      </div>
+    </div>
   );
 }
 
