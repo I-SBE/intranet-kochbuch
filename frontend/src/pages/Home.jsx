@@ -1,4 +1,4 @@
-import { Button, Spinner, Row, Col } from "react-bootstrap";
+import { Button, Spinner, Row, Col, Alert } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +19,7 @@ function Home() {
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
     fetch("/api/recipes")
@@ -32,24 +32,26 @@ function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  if (loading) return (
-    <div className="text-center mt-5">
-      <Spinner animation="border" />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="text-center mt-5">
+        <Spinner animation="border" />
+      </div>
+    );
 
-  if (error) return (
-    <div className="text-center mt-5">
-      <Alert variant="danger">{error}</Alert>
-    </div>
-  );
-  
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (error)
+    return (
+      <div className="text-center mt-5">
+        <Alert variant="danger">{error}</Alert>
+      </div>
+    );
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Row>
+    <div className="home-page">
       <div className="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center">
         <h1 className="mt-3 display-5">Choose From Thousands of Recipes</h1>
         <input
@@ -63,25 +65,38 @@ function Home() {
             <p className="text-light">Welcome, {user?.firstName || "Guest"}!</p>
           ) : (
             <>
-              <Button variant="primary" className="custom-nav-link" onClick={() => navigate("/register")}><FiUserPlus className="me-1" />Sign Up</Button>
-              <Button variant="outline-light" className="custom-nav-link" onClick={() => navigate("/login")}><FiLogIn className="me-1" />Login</Button>
+              <Button
+                variant="primary"
+                className="custom-nav-link"
+                onClick={() => navigate("/register")}
+              >
+                <FiUserPlus className="me-1" /> Sign Up
+              </Button>
+              <Button
+                variant="outline-light"
+                className="custom-nav-link"
+                onClick={() => navigate("/login")}
+              >
+                <FiLogIn className="me-1" /> Login
+              </Button>
             </>
           )}
         </div>
       </div>
 
-      <Col md={3}>
-        <Sidebar />
-      </Col>
-
-      <Col md={9}>
-        <div className="card-grid">
-          {recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          ))}
-        </div>
-      </Col>
-    </Row>
+      <Row className="content-area">
+        <Col md={3}>
+          <Sidebar />
+        </Col>
+        <Col md={9}>
+          <div className="card-grid">
+            {recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

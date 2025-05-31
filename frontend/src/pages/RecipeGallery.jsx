@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Carousel, Container, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
+import { Spinner, Alert, Row } from "react-bootstrap";
 
 import RecipeCard from "../components/RecipeCard";
+
+import "./css/RecipeGallery.css"
 
 //--------------------------------------------------------------------------
 
@@ -34,16 +36,18 @@ function RecipeGallery() {
   if (error) return <Alert variant="danger" className="mt-5">{error}</Alert>;
 
   return (
-    <Container style={{ maxWidth: "1200px", marginTop: "50px" }}>
-      <h1 className="mb-4 text-center">🧾 Rezept-Galerie</h1>
-      <Row>
-        {recipes.map(recipe => (
-          <Col key={recipe.id} md={6} lg={4}>
-            <RecipeCard recipe={recipe} />
-          </Col>
-        ))}
-      </Row>
-    </Container>
+    <Row>
+      <div className="gallery-page">
+        <h1 className="gallery-title">Rezept-Galerie</h1>
+        <hr className="title-divider" />
+        
+        <div className="gallery-recipes-grid">
+          {recipes.map(recipe => (
+            <RecipeCard key={recipe.id} recipe={recipe} />
+          ))}
+        </div>
+      </div>
+    </Row>
   );
 }
 
