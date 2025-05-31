@@ -20,7 +20,10 @@ function RecipeGallery() {
         if (!res.ok) throw new Error("Fehler beim Abrufen der Rezepte");
         return res.json();
       })
-      .then(data => setRecipes(data))
+      .then(data => {
+        const publicRecipes = data.filter(recipe => recipe.is_public === true || recipe.is_public === 1);
+        setRecipes(publicRecipes);
+      })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, []);

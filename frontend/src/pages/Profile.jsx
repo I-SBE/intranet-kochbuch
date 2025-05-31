@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Image, Spinner, Alert, Card, Row, Col, Button, Carousel } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+
+import ProfileHeader from "../components/Profile/ProfileHeader";
+import ToggleFormButton from "../components/Profile/ToggleFormButton";
+import RecipeList from "../components/Profile/RecipeList";
+import ProfileSpinnerOrError from "../components/Profile/ProfileSpinnerOrError";
 
 import { fetchUserProfile } from "../api-services/auth";
 import RecipeForm from "../components/RecipeForm";
+
+import "./css/Profile.css";
 
 //--------------------------------------------------------------------------
 
@@ -15,6 +22,10 @@ function Profile() {
   const [error, setError] = useState("");
   const [recipeError, setRecipeError] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  const [totalRecipes, setTotalRecipes] = useState(0);
+  const [publicCount, setPublicCount] = useState(0);
+  const [privateCount, setPrivateCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -35,7 +46,17 @@ function Profile() {
       }
 
       const data = await response.json();
-      setRecipes(Array.isArray(data.recipes) ? data.recipes : []);
+      const fetchedRecipes = Array.isArray(data.recipes) ? data.recipes : [];
+      
+      const total = fetchedRecipes.length;
+      const publicR = fetchedRecipes.filter(r => r.is_public === true || r.is_public === 1).length;
+      const privateR = total - publicR;
+
+      setRecipes(fetchedRecipes);
+      setTotalRecipes(total);
+      setPublicCount(publicR);
+      setPrivateCount(privateR);
+      
     } catch (err) {
       console.error("Fehler beim Laden der Rezepte:", err);
       setRecipeError("Fehler beim Laden deiner Rezepte.");
@@ -63,122 +84,32 @@ function Profile() {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  if (loading) return <Spinner animation="border" className="mt-5" />;
-  if (error) return <Alert variant="danger" className="mt-5">{error}</Alert>;
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  return (
-    <Container style={{ maxWidth: "800px", marginTop: "100px" }}>
-      <div className="d-flex align-items-center gap-4 mb-4 border-bottom pb-4">
-        <Image
-          src={`http://backend-api.com:3001/profile_pics/${user.image_url || "default-profile.png"}`}
-          roundedCircle
-          width={120}
-          height={120}
-          style={{ objectFit: "cover" }}
-          alt="Profilbild"
+ return (
+    <ProfileSpinnerOrError loading={loading} error={error}>
+      <Container style={{ marginTop: "100px" }}>
+        <ProfileHeader
+          user={user}
+          totalRecipes={totalRecipes}
+          publicCount={publicCount}
+          privateCount={privateCount}
         />
-        <div style={{ position: "relative" }}>
-          <h3>{user.firstName} {user.lastName}</h3>
-          <p className="mb-1">{user.email}</p>
-          <small className="text-muted">
-            Mitglied seit{" "}
-            {new Date(user.created_at).toLocaleDateString(
-              "de-DE",
-              { year: "numeric", month: "long", day: "numeric" }
-            )}
-          </small>
-        </div>
-        <Button
-          variant="light"
-          size="sm"
-          onClick={() => navigate("/edit-profile")}
-          title="Profil bearbeiten"
-        >
-          ✏️
-        </Button>
-      </div>
 
-      <Button
-        variant={showForm ? "outline-danger" : "outline-primary"}
-        className="mb-4"
-        onClick={() => setShowForm(!showForm)}
-      >
-        {showForm ? "Zurück" : "Rezept veröffentlichen"}
-      </Button>
+        <ToggleFormButton showForm={showForm} toggleForm={() => setShowForm(!showForm)} />
 
-      {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
+        {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
 
-      <h4 className="mb-3">Meine Rezepte</h4>
-      {recipeError && <Alert variant="warning">{recipeError}</Alert>}
-      {Array.isArray(recipes) && recipes.length === 0 ? (
-        <p>Du hast noch keine Rezepte veröffentlicht.</p>
-      ) : (
-        <Row>
-          {recipes.map(recipe => (
-            <Col md={6} key={recipe.id} className="mb-4">
-              <Card onClick={() => navigate(`/recipe/${recipe.id}`)} style={{ cursor: "pointer" , position: "relative" }}>
-                <Button
-                  variant="light"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/edit-recipe/${recipe.id}`);
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    left: "10px",
-                    borderRadius: "50%",
-                    width: "32px",
-                    height: "32px",
-                    padding: "0",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 2
-                  }}
-                >✏️</Button>
-                {Array.isArray(recipe.images) && recipe.images.length > 0 ? (
-                  <Carousel interval={null} indicators={recipe.images.length > 1}>
-                    {recipe.images.map((img, idx) => (
-                      <Carousel.Item key={idx}>
-                        <img
-                          src={`http://backend-api.com:3001/uploads/${img}`}
-                          alt={`Bild ${idx + 1}`}
-                          className="d-block w-100"
-                          style={{
-                            height: "auto",
-                            objectFit: "cover",
-                            borderRadius: "8px"
-                          }}
-                        />
-                      </Carousel.Item>
-                    ))}
-                  </Carousel>
-                ) : (
-                  <img
-                    src="http://backend-api.com:3001/uploads/default-recipe.png"
-                    alt="default-pic"
-                  />
-                )}
+        <hr className="profile-divider" />
 
-                <Card.Body>
-                  <Card.Title>{recipe.title}</Card.Title>
-                  <Card.Text>
-                    <strong>Zutaten:</strong><br />
-                    {recipe.ingredients}<br /><br />
-                    <strong>Schritte:</strong><br />
-                    {recipe.steps}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
-    </Container>
+        <h4 className="mb-3" style={{ marginTop: "3rem" }} >Meine Rezepte</h4>
+
+          <RecipeList
+            recipes={recipes}
+            recipeError={recipeError}
+            onRefresh={fetchUserRecipes}
+          />
+
+      </Container>
+    </ProfileSpinnerOrError>
   );
 }
 

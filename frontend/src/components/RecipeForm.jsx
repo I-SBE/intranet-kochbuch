@@ -15,6 +15,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
   const [existingImages, setExistingImages] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isPublic, setIsPublic] = useState(true); 
 
   const token = localStorage.getItem("token");
 
@@ -30,6 +31,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       setTitle(initialData.title || "");
       setIngredients(initialData.ingredients || "");
       setSteps(initialData.steps || "");
+      setIsPublic(initialData.is_public === true || initialData.is_public === 1);
       if (Array.isArray(initialData.images)) {
         setExistingImages(initialData.images);
       }
@@ -49,57 +51,58 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
     }
 
     try {
-    if (mode === "edit" && newImages.length > 0) {
-      const formData = new FormData();
-      newImages.forEach((img) => formData.append("images", img));
+      if (mode === "edit" && newImages.length > 0) {
+        const formData = new FormData();
+        newImages.forEach((img) => formData.append("images", img));
 
-      const response = await fetch(`http://backend-api.com:3001/api/recipes/${initialData.id}/images`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
+        const response = await fetch(`http://backend-api.com:3001/api/recipes/${initialData.id}/images`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Fehler beim Hochladen.");
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Fehler beim Hochladen.");
 
-      setExistingImages((prev) => [...prev, ...data.newImages]);
-      setNewImages([]);
-      setPreviewImages([]);
+        setExistingImages((prev) => [...prev, ...data.newImages]);
+        setNewImages([]);
+        setPreviewImages([]);
+      }
+
+      if (mode === "edit" && onSubmit) {
+        const updatedData = { title, ingredients, steps, is_public: isPublic };
+        await onSubmit(updatedData);
+        setSuccess("Rezept erfolgreich aktualisiert!");
+      } else {
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("ingredients", ingredients);
+        formData.append("steps", steps);
+        formData.append("is_public", isPublic);
+        newImages.forEach((img) => formData.append("images", img));
+
+        const response = await fetch("http://backend-api.com:3001/api/recipes", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || "Fehler beim Speichern.");
+
+        setSuccess("Rezept erfolgreich gespeichert!");
+        setTitle("");
+        setIngredients("");
+        setSteps("");
+        setNewImages([]);
+        setPreviewImages([]);
+        if (onRecipeAdded) onRecipeAdded();
+      }
+
+    } catch (err) {
+      setError(err.message || "Fehler beim Speichern.");
     }
-
-    if (mode === "edit" && onSubmit) {
-      const updatedData = { title, ingredients, steps };
-      await onSubmit(updatedData);
-      setSuccess("Rezept erfolgreich aktualisiert!");
-    } else {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("ingredients", ingredients);
-      formData.append("steps", steps);
-      newImages.forEach((img) => formData.append("images", img));
-
-      const response = await fetch("http://backend-api.com:3001/api/recipes", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Fehler beim Speichern.");
-
-      setSuccess("Rezept erfolgreich gespeichert!");
-      setTitle("");
-      setIngredients("");
-      setSteps("");
-      setNewImages([]);
-      setPreviewImages([]);
-      if (onRecipeAdded) onRecipeAdded();
-    }
-
-  } catch (err) {
-    setError(err.message || "Fehler beim Speichern.");
-  }
-};
+  };
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -126,6 +129,8 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
     }
   };
 
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   const handleNewImageUpload = (files) => {
     const fileArray = Array.from(files);
     setNewImages(prev => [...prev, ...fileArray]);
@@ -259,6 +264,27 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
           </div>
         </div>
       </Form.Group>
+
+      <Form.Group controlId="is_public">
+      <Form.Label>Sichtbarkeit</Form.Label>
+      <Form.Check
+        type="radio"
+        label="Öffentlich"
+        name="is_public"
+        value="true"
+        checked={isPublic === true}
+        onChange={() => setIsPublic(true)}
+      />
+      <Form.Check
+        type="radio"
+        label="Privat"
+        name="is_public"
+        value="false"
+        checked={isPublic === false}
+        onChange={() => setIsPublic(false)}
+      />
+    </Form.Group>
+
 
       <Form.Group className="mb-3">
         <Form.Label>Titel</Form.Label>

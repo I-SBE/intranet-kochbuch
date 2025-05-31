@@ -23,7 +23,9 @@ const upload = multer({ storage });
 
 router.get('/', async (req, res) => {
   try {
-    const recipes = await pool.query('SELECT * FROM recipes');
+    const recipes = await pool.query(
+      `SELECT * FROM recipes WHERE is_public = true`
+    );
 
     for (let recipe of recipes) {
       const images = await pool.query(
@@ -43,7 +45,7 @@ router.get('/', async (req, res) => {
 //--------------------------------------------------------------------------
 
 router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) => {
-  const { title, ingredients, steps } = req.body;
+  const { title, ingredients, steps, is_public } = req.body;
   const user_id = req.user.id;
   const files = req.files || [];
 
@@ -53,8 +55,8 @@ router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) =
 
   try {
     const result = await pool.query(
-      'INSERT INTO recipes (user_id, title, ingredients, steps, created_at) VALUES (?, ?, ?, ?, NOW())',
-      [user_id, title, ingredients, steps]
+      'INSERT INTO recipes (user_id, title, ingredients, steps, is_public, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
+      [user_id, title, ingredients, steps, is_public === 'false' ? false : true]
     );
 
     const recipe_id = result.insertId;
@@ -105,7 +107,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 
 router.put('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
-  const { title, ingredients, steps } = req.body;
+  const { title, ingredients, steps, is_public } = req.body;
   const user_id = req.user.id;
 
   if (!title || !ingredients || !steps) {
@@ -120,8 +122,8 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     }
 
     await pool.query(
-      'UPDATE recipes SET title = ?, ingredients = ?, steps = ? WHERE id = ? AND user_id = ?',
-      [title, ingredients, steps, id, user_id]
+      'UPDATE recipes SET title = ?, ingredients = ?, steps = ?, is_public = ? WHERE id = ? AND user_id = ?',
+      [title, ingredients, steps, !!is_public, id, user_id]
     );
 
     res.status(200).json({ message: 'Rezept erfolgreich aktualisiert.' });

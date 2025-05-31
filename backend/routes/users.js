@@ -121,7 +121,7 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
     const userId = req.user.id;
 
     const recipes = await pool.query(
-      'SELECT id, title, ingredients, steps, created_at FROM recipes WHERE user_id = ?',
+      'SELECT * FROM recipes WHERE user_id = ?',
       [userId]
     );
 
@@ -131,6 +131,7 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
         [recipe.id]
       );
       recipe.images = images.map(img => img.image_url);
+      recipe.is_public = Boolean(recipe.is_public);
     }
 
     res.status(200).json({ recipes });

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Link, useNavigate } from "react-router-dom";
 import {Navbar, Nav, Container} from 'react-bootstrap';
-import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 //--------------------------------------------------------------------------
@@ -45,13 +44,13 @@ function Header() {
             <Nav className="ms-auto align-items-center">
               {isLoggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/profile" className="custom-nav-link"><FiUser className="me-1" />Profile</Nav.Link>
+                  <Nav.Link as={Link} to="/profile" className="custom-nav-link  with-border"><FiUser className="me-1" />Profile</Nav.Link>
                   <Nav.Link onClick={handleLogout} className="custom-nav-link"style={{backgroundColor: "#7f0000"}}><FiLogOut className="me-1" />Logout</Nav.Link>
                 </>
               ) : (
                 <>
                   <Nav.Link as={Link} to="/login" className="custom-nav-link" style={{backgroundColor: "#007f00"}}> <FiLogIn className="me-1" />Login</Nav.Link>
-                  <Nav.Link as={Link} to="/register" className="custom-nav-link"><FiUserPlus className="me-1" />Register</Nav.Link>
+                  <Nav.Link as={Link} to="/register" className="custom-nav-link with-border"><FiUserPlus className="me-1" />Register</Nav.Link>
                 </>
               )}
             </Nav>

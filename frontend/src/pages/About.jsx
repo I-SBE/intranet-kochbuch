@@ -26,6 +26,8 @@ function AboutPage() {
           </Col>
         </Row>
 
+        <hr className="section-divider" />
+
         <div className="about-section text-center">
           <h1 className="fade-in-title">Über uns</h1>
           <p className="fs-5 fade-in-scale">
@@ -38,6 +40,8 @@ function AboutPage() {
             Alle Inhalte sind nur innerhalb eines Intranets zugänglich und nicht öffentlich.
           </p>
         </div>
+
+        <hr className="section-divider" />
 
         <Row className="about-section bottom-section">
           <Col md={4} className="about-column fade-in-scale">

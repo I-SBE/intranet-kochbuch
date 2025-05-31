@@ -9,7 +9,7 @@
 /* ========================================= */
 
 .about-section {
-  padding: 100px 30px;
+  padding: 30px 30px;
   text-align: center;
   transition: all 0.3s ease-in-out;
 }
@@ -21,7 +21,8 @@
   background: radial-gradient(circle at center, #0f172a 10%, #ff880061 100%);
   border-radius: 50px;
   box-shadow: 0 8px 24px #ff880040;
-  margin-bottom: 60px;
+  margin-bottom: 160px;
+  margin-top: 160px;
 }
 
 /* ========================================= */
@@ -90,4 +91,13 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.section-divider {
+  border: none;
+  height: 5px;
+  background: radial-gradient(circle, #000 25%, #ff8800);
+  width: 100%;
+  margin: 4rem auto;
+  opacity: 0.8;
 }
