@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import RecipeCard from "../components/recipe/RecipeCard";
 import Sidebar from "../components/layout/Sidebar";
@@ -15,6 +15,7 @@ function RecipeGallery() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,12 +51,19 @@ function RecipeGallery() {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  const handleFilterChange = (newFilters) => {
+    const searchParams = new URLSearchParams(newFilters).toString();
+    navigate(`/gallery?${searchParams}`);
+  };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   return (
     <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="gallery-page">
         <div className="gallery-layout">
           <div className="sidebar-container">
-            <Sidebar />
+            <Sidebar onFilterChange={handleFilterChange} />
           </div>
 
           <div className="content-container">
@@ -68,7 +76,7 @@ function RecipeGallery() {
                   <RecipeCard key={recipe.id} recipe={recipe} />
                 ))
               ) : (
-                <p className="text-light mt-4">Keine Rezepte gefunden, die den Filterkriterien entsprechen.</p>
+                <p className="no-result">Keine Rezepte gefunden!</p>
               )}
             </div>
           </div>

@@ -93,7 +93,7 @@ function Home() {
         </div>
 
         <div className="info-section mt-5 text-light">
-          <h3 className="section-title text-center mb-5">🌍 Warum Koch-Buch?</h3>
+          <h3 className="section-title text-white text-center mb-4">Warum Koch-Buch?</h3>
 
           <div className="info-grid">
             <div className="info-card text-center">

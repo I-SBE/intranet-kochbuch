@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import "../../styles/Sidebar.css";
 
@@ -12,6 +13,17 @@ function Sidebar({ onFilterChange }) {
     duration: "",
     difficulty: ""
   });
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const initialFilters = {
+      search: queryParams.get("search") || "",
+      category: queryParams.get("category") || "",
+      duration: queryParams.get("duration") || "",
+      difficulty: queryParams.get("difficulty") || ""
+    };
+    setFilters(initialFilters);
+  }, [location.search]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
