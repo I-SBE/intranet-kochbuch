@@ -5,6 +5,10 @@
   align-items: center;
   padding-top: 80px;
   color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .kontakt-card {
@@ -35,4 +39,16 @@
 .kontakt-card .form-label {
   font-weight: 500;
   margin-bottom: 5px;
+}
+
+.image-preview {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 80px #ff8800, 0 0 30px rgb(63, 0, 0);
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
 }

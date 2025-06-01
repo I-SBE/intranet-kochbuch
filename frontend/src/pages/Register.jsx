@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import { validatePassword, validateMatchingPasswords } from "../utils/validation";
 import { registerUser } from "../api-services/auth";
+
+import { FiUserPlus } from "react-icons/fi";
 import "../styles/FormLayout.css";
 
 //--------------------------------------------------------------------------
@@ -115,9 +117,11 @@ function Register() {
             <Form.Control
               type="text"
               name="firstName"
+              placeholder="Ihr Vorname"
               value={formData.firstName}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
@@ -126,9 +130,11 @@ function Register() {
             <Form.Control
               type="text"
               name="lastName"
+              placeholder="Ihr Nachname"
               value={formData.lastName}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
@@ -137,9 +143,11 @@ function Register() {
             <Form.Control
               type="email"
               name="email"
+              placeholder="Ihre E-Mail-Adresse"
               value={formData.email}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
@@ -148,9 +156,11 @@ function Register() {
             <Form.Control
               type="password"
               name="password"
+              placeholder="Ein sicheres Passwort"
               value={formData.password}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
@@ -159,14 +169,22 @@ function Register() {
             <Form.Control
               type="password"
               name="confirmPassword"
+              placeholder="Passwort erneut eingeben"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
+          <Button
+            variant="warning"
+            type="submit"
+            className="custom-nav-link align-items-center"
+            style={{margin:"1rem"}}
+          >
             Registrieren
+            <FiUserPlus className="me-1" />
           </Button>
         </Form>
       </div>

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { loginUser } from "../api-services/auth";
 
+import { FiLogIn, FiUserPlus } from "react-icons/fi";
 import "../styles/FormLayout.css";
 
 //--------------------------------------------------------------------------
@@ -75,9 +76,11 @@ function Login({ onLogin }) {
             <Form.Control
               type="email"
               name="email"
+              placeholder="Ihre E-Mail-Adresse"
               value={formData.email}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
@@ -86,16 +89,39 @@ function Login({ onLogin }) {
             <Form.Control
               type="password"
               name="password"
+              placeholder="Ihr Passwort"
               value={formData.password}
               onChange={handleChange}
               required
+              style={{margin:"1rem"}}
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
+          <Button 
+            variant="warning"
+            type="submit"
+            className="custom-nav-link align-items-center"
+            style={{margin:"1rem"}}
+          >
             Einloggen
+            <FiLogIn className="me-1" />
           </Button>
         </Form>
+
+        <div className="mt-3 text-center d-flex justify-content-center align-items-center gap-2 flex-wrap">
+          <span>Noch kein Konto?</span>
+          <Button 
+            variant="outline-light"
+            type="submit"
+            className="custom-nav-link"
+            style={{ fontSize: "0.8rem", padding: "5px 10px" }}
+            onClick={() => navigate("/register")}
+          >
+            Registrieren
+            <FiUserPlus className="me-1" />
+          </Button>
+        </div>
+
       </div>
     </div>
 
