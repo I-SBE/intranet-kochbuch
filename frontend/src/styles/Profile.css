@@ -1,19 +1,18 @@
-.profile-header {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
-  
+.profile-page {
+  padding: 2rem;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* ========================================= */
 
-.profile-recipes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 10px;
-  padding-bottom: 3rem;
-  padding-top: 3rem;
-
+.profile-header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  max-width: 1300px;
 }
 
 /* ========================================= */
@@ -34,7 +33,7 @@
 
 .profile-header p {
   margin: 0;
-  color: #444;
+  color: #ddd;
 }
 
 /* ========================================= */
@@ -56,6 +55,16 @@
 .profile-stats {
   padding: 60px;
   color: #ddd;
+}
+
+/* ========================================= */
+
+.profile-recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 }
 
 /* ========================================= */

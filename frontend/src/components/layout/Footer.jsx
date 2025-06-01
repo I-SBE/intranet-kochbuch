@@ -3,9 +3,11 @@
 
 function Footer() {
   return (
-    <footer className="bg-dark text-light text-center py-3 mt-5">
-      <p className="mb-0">© {new Date().getFullYear()} Koch-Buch - Alle Rechte vorbehalten.</p>
+    <footer className="text-center text-light py-4 border-top border-dark mt-5">
+      <p>&copy; 2025 Intranet-Kochbuch</p>
+      <small>Dieses System ist nur innerhalb des internen Netzwerks verfügbar</small>
     </footer>
+
   );
 }
 

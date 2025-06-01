@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container } from "react-bootstrap";
 
-import ProfileHeader from "../components/Profile/ProfileHeader";
-import ToggleFormButton from "../components/Profile/ToggleFormButton";
-import RecipeList from "../components/Profile/RecipeList";
-import ProfileSpinnerOrError from "../components/Profile/ProfileSpinnerOrError";
+import ProfileHeader from "../components/profile/ProfileHeader";
+import ToggleFormButton from "../components/profile/ToggleFormButton";
+import RecipeList from "../components/profile/RecipeList";
+import ProfileSpinnerOrError from "../components/profile/ProfileSpinnerOrError";
 
 import { fetchUserProfile } from "../api-services/auth";
-import RecipeForm from "../components/RecipeForm";
+import RecipeForm from "../components/recipe/RecipeForm";
 
-import "./css/Profile.css";
+import "../styles/Profile.css";
 
 //--------------------------------------------------------------------------
 
 function Profile() {
-
   const [user, setUser] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,8 +26,6 @@ function Profile() {
   const [privateCount, setPrivateCount] = useState(0);
 
   const navigate = useNavigate();
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const fetchUserRecipes = async () => {
     try {
@@ -47,7 +43,7 @@ function Profile() {
 
       const data = await response.json();
       const fetchedRecipes = Array.isArray(data.recipes) ? data.recipes : [];
-      
+
       const total = fetchedRecipes.length;
       const publicR = fetchedRecipes.filter(r => r.is_public === true || r.is_public === 1).length;
       const privateR = total - publicR;
@@ -62,8 +58,6 @@ function Profile() {
       setRecipeError("Fehler beim Laden deiner Rezepte.");
     }
   };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
     async function fetchUser() {
@@ -82,11 +76,9 @@ function Profile() {
     fetchUserRecipes();
   }, []);
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- return (
+  return (
     <ProfileSpinnerOrError loading={loading} error={error}>
-      <Container style={{ marginTop: "100px" }}>
+      <div className="profile-page" style={{ marginTop: "100px" }}>
         <ProfileHeader
           user={user}
           totalRecipes={totalRecipes}
@@ -100,15 +92,14 @@ function Profile() {
 
         <hr className="profile-divider" />
 
-        <h4 className="mb-3" style={{ marginTop: "3rem" }} >Meine Rezepte</h4>
+        <h4 className="mb-3" style={{ marginTop: "3rem" }}>Meine Rezepte</h4>
 
-          <RecipeList
-            recipes={recipes}
-            recipeError={recipeError}
-            onRefresh={fetchUserRecipes}
-          />
-
-      </Container>
+        <RecipeList
+          recipes={recipes}
+          recipeError={recipeError}
+          onRefresh={fetchUserRecipes}
+        />
+      </div>
     </ProfileSpinnerOrError>
   );
 }

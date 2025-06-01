@@ -8,6 +8,17 @@
 
 /* ========================================= */
 
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.5rem;
+  justify-content: center;
+  align-items: stretch;
+  padding: 0 1rem;
+}
+
+/* ========================================= */
+
 .about-section {
   padding: 30px 30px;
   text-align: center;

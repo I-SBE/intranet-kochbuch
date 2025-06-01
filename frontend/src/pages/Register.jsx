@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import { validatePassword, validateMatchingPasswords } from "../utils/validation";
 import { registerUser } from "../api-services/auth";
-import "./css/FormLayout.css";
+import "../styles/FormLayout.css";
 
 //--------------------------------------------------------------------------
 

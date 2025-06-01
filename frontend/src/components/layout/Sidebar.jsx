@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import "./css/Sidebar.css";
+import "../../styles/Sidebar.css";
 
 //--------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ function Sidebar({ onFilterChange }) {
       />
 
       <div className="sidebar-section mt-4">
-        <div className="section-title">Kategorie</div>
+        <div className="sidebar-title">Kategorie</div>
         <select
           className="form-select"
           value={filters.category}
@@ -55,7 +55,7 @@ function Sidebar({ onFilterChange }) {
       </div>
 
       <div className="sidebar-section mt-4">
-        <div className="section-title">Dauer</div>
+        <div className="sidebar-title">Dauer</div>
         <select
           className="form-select"
           value={filters.duration}
@@ -69,7 +69,7 @@ function Sidebar({ onFilterChange }) {
       </div>
 
       <div className="sidebar-section mt-4">
-        <div className="section-title">Schwierigkeit</div>
+        <div className="sidebar-title">Schwierigkeit</div>
         <select
           className="form-select"
           value={filters.difficulty}

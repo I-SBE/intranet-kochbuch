@@ -1,23 +1,41 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Spinner, Alert, Row } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
-import RecipeCard from "../components/RecipeCard";
+import RecipeCard from "../components/recipe/RecipeCard";
+import Sidebar from "../components/layout/Sidebar";
+import ProfileSpinnerOrError from "../components/profile/ProfileSpinnerOrError";
 
-import "./css/RecipeGallery.css"
+import "../styles/RecipeGallery.css";
 
 //--------------------------------------------------------------------------
 
 function RecipeGallery() {
+
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const location = useLocation();
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const filters = {
+    search: queryParams.get("search") || "",
+    category: queryParams.get("category") || "",
+    duration: queryParams.get("duration") || "",
+    difficulty: queryParams.get("difficulty") || ""
+  };
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
-    fetch("/api/recipes")
+
+    const query = new URLSearchParams(filters).toString();
+    const url = `/api/recipes${query ? `?${query}` : ""}`;
+
+    setLoading(true);
+    fetch(url)
       .then(res => {
         if (!res.ok) throw new Error("Fehler beim Abrufen der Rezepte");
         return res.json();
@@ -28,26 +46,35 @@ function RecipeGallery() {
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [location.search]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  if (loading) return <Spinner animation="border" className="mt-5" />;
-  if (error) return <Alert variant="danger" className="mt-5">{error}</Alert>;
-
   return (
-    <Row>
+    <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="gallery-page">
-        <h1 className="gallery-title">Rezept-Galerie</h1>
-        <hr className="title-divider" />
-        
-        <div className="gallery-recipes-grid">
-          {recipes.map(recipe => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          ))}
+        <div className="gallery-layout">
+          <div className="sidebar-container">
+            <Sidebar />
+          </div>
+
+          <div className="content-container">
+            <h1 className="gallery-title">Rezept-Galerie</h1>
+            <hr className="title-divider" />
+
+            <div className="gallery-recipes-grid">
+              {recipes.length > 0 ? (
+                recipes.map(recipe => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))
+              ) : (
+                <p className="text-light mt-4">Keine Rezepte gefunden, die den Filterkriterien entsprechen.</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </Row>
+    </ProfileSpinnerOrError>
   );
 }
 

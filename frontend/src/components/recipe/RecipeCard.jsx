@@ -2,7 +2,8 @@ import { Card, Button, Carousel } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import { FiHeart, FiEdit, FiArrowRightCircle } from "react-icons/fi";
-import "./css/RecipeCard.css";
+
+import "../../styles/RecipeCard.css";
 
 //--------------------------------------------------------------------------
 

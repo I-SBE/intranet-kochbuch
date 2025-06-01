@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Button, Modal } from "react-bootstrap";
 
-import RecipeForm from "../components/RecipeForm";
+import RecipeForm from "../components/recipe/RecipeForm";
 
 //--------------------------------------------------------------------------
 

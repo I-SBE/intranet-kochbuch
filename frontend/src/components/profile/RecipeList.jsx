@@ -1,5 +1,5 @@
 import { Alert } from "react-bootstrap";
-import RecipeCard from "../RecipeCard";
+import RecipeCard from "../recipe/RecipeCard";
 import { useNavigate } from "react-router-dom";
 
 //--------------------------------------------------------------------------

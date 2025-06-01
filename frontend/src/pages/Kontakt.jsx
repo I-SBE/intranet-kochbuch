@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 
-import "./css/FormLayout.css";
+import "../styles/FormLayout.css";
+import { FiArrowRightCircle } from "react-icons/fi";
+
 
 //--------------------------------------------------------------------------
 
@@ -95,9 +97,12 @@ function Kontakt() {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Abschicken
-          </Button>
+          <div className="text-center mt-4">
+            <Button variant="warning" type="submit" className="custom-nav-link align-items-center">
+              Abschicken
+              <FiArrowRightCircle className="ms-2" />
+            </Button>
+          </div>
         </Form>
       </div>
     </div>

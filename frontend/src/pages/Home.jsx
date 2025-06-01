@@ -1,13 +1,13 @@
-import { Button, Spinner, Row, Col, Alert } from "react-bootstrap";
+import { Button, Spinner, Alert } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-import RecipeCard from "../components/RecipeCard";
-import Sidebar from "../components/Sidebar";
+import RecipeCard from "../components/recipe/RecipeCard";
+import ProfileSpinnerOrError from "../components/profile/ProfileSpinnerOrError";
 
-import { FiLogIn, FiUserPlus } from "react-icons/fi";
-import "./css/Home.css";
+import { FiLogIn, FiUserPlus, FiArrowRightCircle } from "react-icons/fi";
+import "../styles/Home.css";
 
 //--------------------------------------------------------------------------
 
@@ -18,16 +18,11 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({});
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
-
   useEffect(() => {
+
     fetch("/api/recipes")
       .then((res) => {
         if (!res.ok) throw new Error("Fehler beim Abrufen der Rezepte");
@@ -38,71 +33,11 @@ function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  useEffect(() => {
-    let result = [...recipes];
-
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      result = result.filter(recipe =>
-        recipe.title.toLowerCase().includes(q) ||
-        recipe.ingredients.toLowerCase().includes(q) ||
-        recipe.steps.toLowerCase().includes(q)
-      );
-    }
-
-    if (filters.duration) {
-      result = result.filter((r) => {
-        const stepCount = r.steps.split(" ").length;
-        if (filters.duration === "Unter 15 Min") return stepCount < 50;
-        if (filters.duration === "15–30 Min") return stepCount >= 50 && stepCount <= 100;
-        if (filters.duration === "Über 30 Min") return stepCount > 100;
-        return true;
-      });
-    }
-
-    if (filters.difficulty) {
-      result = result.filter((r) => {
-        const ingredientCount = r.ingredients.split("\n").length;
-        if (filters.difficulty === "Einfach") return ingredientCount <= 5;
-        if (filters.difficulty === "Mittel") return ingredientCount > 5 && ingredientCount <= 10;
-        if (filters.difficulty === "Schwer") return ingredientCount > 10;
-        return true;
-      });
-    }
-
-    if (filters.category) {
-      const cat = filters.category.toLowerCase();
-      result = result.filter((r) =>
-        r.title.toLowerCase().includes(cat) ||
-        r.ingredients.toLowerCase().includes(cat)
-      );
-    }
-
-    setFilteredRecipes(result);
-  }, [filters, recipes]);
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  if (loading)
-    return (
-      <div className="text-center mt-5">
-        <Spinner animation="border" />
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="text-center mt-5">
-        <Alert variant="danger">{error}</Alert>
-      </div>
-    );
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Row>
+    <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="home-page">
         <div className="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center">
           <h1 className="mt-3 display-5">Choose From Thousands of Recipes</h1>
@@ -118,7 +53,7 @@ function Home() {
             ) : (
               <>
                 <Button
-                  variant="primary"
+                  variant="warning"
                   className="custom-nav-link"
                   onClick={() => navigate("/register")}
                 >
@@ -136,32 +71,52 @@ function Home() {
           </div>
         </div>
 
-        <Row className="content-area">
-          <Col md={3}>
-            <Sidebar onFilterChange={handleFilterChange} />
-          </Col>
-          <Col md={9}>
-            <div className="card-grid">
-              {Object.keys(filters).length > 0 ? (
-                filteredRecipes.length > 0 ? (
-                  filteredRecipes.map((recipe) => (
-                    <RecipeCard key={recipe.id} recipe={recipe} />
-                  ))
-                ) : (
-                  <div className="no-results">
-                    <p>Keine Rezepte gefunden!</p>
-                  </div>
-                )
-              ) : (
-                recipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
-                ))
-              )}
+        <div className="home-recipes mt-5">
+          <h2 className="section-title text-white text-center mb-4">Unsere beliebtesten Rezepte</h2>
+
+          <div className="card-grid px-4">
+            {recipes.slice(0, 8).map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+
+          <div className="text-center mt-4">
+            <Button
+              variant="warning"
+              onClick={() => navigate("/gallery")}
+              className="custom-nav-link align-items-center"
+            >
+              Jetzt alle Rezepte entdecken
+              <FiArrowRightCircle className="ms-2" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="info-section mt-5 text-light">
+          <h3 className="section-title text-center mb-5">🌍 Warum Koch-Buch?</h3>
+
+          <div className="info-grid">
+            <div className="info-card text-center">
+              <img src="/icons/favorite-icon.png" alt="Favoriten" className="info-icon mb-3" />
+              <h5>Rezepte merken</h5>
+              <p>Markieren Sie Lieblingsrezepte mit einem Herzsymbol und greifen Sie später schnell darauf zu.</p>
             </div>
-          </Col>
-        </Row>
+
+            <div className="info-card text-center">
+              <img src="icons/add-icon.png" alt="Eigene Rezepte" className="info-icon mb-3" />
+              <h5>Eigene Rezepte hochladen</h5>
+              <p>Teilen Sie Ihre eigenen Rezepte mit Kolleg:innen im Intranet – einfach & direkt.</p>
+            </div>
+
+            <div className="info-card text-center">
+              <img src="icons/search-icon.png" alt="Filtern & Suchen" className="info-icon mb-3" />
+              <h5>Filtern & Suchen</h5>
+              <p>Nutzen Sie die intelligente Suche und Filterfunktionen, um schnell passende Rezepte zu finden.</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </Row>
+    </ProfileSpinnerOrError>
   );
 }
 
