@@ -11,13 +11,7 @@
 /* ========================================= */
 
 .hero-section {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/BG1.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   height: 90vh;
-  padding: 60px 20px;
 }
 
 /* ========================================= */
@@ -57,4 +51,22 @@
   background-color: rgba(255, 255, 255, 0.15);
   border-color: #ff8800;
   color: #fff;
+}
+
+.no-results {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  min-width: 1350px;
+  min-height: 200px;
+}
+
+.no-results p {
+  font-size: 2rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 6rem;
+  border-radius: 16px;
+  font-weight: bold;
+  width: 100%;
 }

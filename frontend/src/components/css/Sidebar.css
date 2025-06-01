@@ -1,44 +1,110 @@
 .sidebar {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-radius: 12px;
-  padding: 16px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 16px;
+  padding: 24px;
   position: sticky;
   top: 100px;
   height: fit-content;
+  min-width: 260px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  
+  box-shadow:
+    0 10px 24px rgba(255, 136, 0, 0.5),
+    inset 0 0 25px rgba(255, 136, 0, 0.15);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.sidebar-section h6 {
-  font-size: 0.9rem;
+.search-input {
+  background-color: #2c2c2c;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ffaa3c;
+  box-shadow: 0 0 0 0.15rem rgba(255, 170, 60, 0.25);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.section-title {
+  font-size: 0.95rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
+  color: #ffcc70;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #444;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .sidebar-section ul {
-  list-style: none;
+  margin-left: 1rem;
   padding-left: 0;
+  list-style: none;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .sidebar-section ul li {
-  margin-bottom: 0.4rem;
-}
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.sidebar-section ul li a {
-  color: #333;
-  text-decoration: none;
-  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.sidebar-section ul li a:hover {
-  text-decoration: underline;
+.filter-btn {
+  background: none;
+  border: none;
+  color: #dddddd;
+  font-size: 0.92rem;
+  text-align: left;
+  width: 100%;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.filter-btn.active {
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.173);
+  color: #ffcd70;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* Dropdown Styling */
+.sidebar .form-select {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.2s ease;
+}
+
+.sidebar .form-select:focus {
+  border-color: #ff8800;
+  box-shadow: 0 0 0 0.15rem rgba(255, 170, 60, 0.25);
+  outline: none;
+}
+
+.sidebar .form-select option:checked {
+  background-color: #ff8800;
+  color: #1e1e1e;
 }

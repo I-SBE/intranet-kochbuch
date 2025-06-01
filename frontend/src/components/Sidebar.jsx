@@ -1,48 +1,86 @@
+import { useState } from "react";
+
 import "./css/Sidebar.css";
 
 //--------------------------------------------------------------------------
 
+function Sidebar({ onFilterChange }) {
 
-function Sidebar() {
+  const [filters, setFilters] = useState({
+    search: "",
+    category: "",
+    duration: "",
+    difficulty: ""
+  });
 
-  const sidebarData = {
-    searchPlaceholder: "🔍 Suche",
-    sections: [
-        {
-        title: "🍽 Kategorien",
-        items: ["Frühstück", "Mittagessen", "Abendessen", "Desserts"]
-        },
-        {
-        title: "🕒 Dauer",
-        items: ["Unter 15 Min", "15–30 Min", "Über 30 Min"]
-        },
-        {
-        title: "💪 Schwierigkeit",
-        items: ["Einfach", "Mittel", "Schwer"]
-        }
-    ]
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  const handleChange = (field, value) => {
+    const newFilters = { ...filters, [field]: value };
+    setFilters(newFilters);
+    onFilterChange(cleanFilters(newFilters));
   };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  const cleanFilters = (f) => {
+    return Object.fromEntries(Object.entries(f).filter(([_, v]) => v));
+  };
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
     <div className="sidebar me-4">
       <input
         type="text"
-        placeholder={sidebarData.searchPlaceholder}
-        className="form-control mb-3"
+        placeholder="Suche"
+        className="form-control mb-3 search-input"
+        value={filters.search}
+        onChange={(e) => handleChange("search", e.target.value)}
       />
 
-      {sidebarData.sections.map((section, index) => (
-        <div className="sidebar-section mt-4" key={index}>
-          <h6 className="text-muted">{section.title}</h6>
-          <ul className="list-unstyled">
-            {section.items.map((item, idx) => (
-              <li key={idx}><a href="#">{item}</a></li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div className="sidebar-section mt-4">
+        <div className="section-title">Kategorie</div>
+        <select
+          className="form-select"
+          value={filters.category}
+          onChange={(e) => handleChange("category", e.target.value)}
+        >
+          <option value="">Alle</option>
+          <option value="breakfast">Frühstück</option>
+          <option value="lunch">Mittagessen</option>
+          <option value="dinner">Abendessen</option>
+          <option value="dessert">Desserts</option>
+        </select>
+      </div>
+
+      <div className="sidebar-section mt-4">
+        <div className="section-title">Dauer</div>
+        <select
+          className="form-select"
+          value={filters.duration}
+          onChange={(e) => handleChange("duration", e.target.value)}
+        >
+          <option value="">Alle</option>
+          <option value="Unter 15 Min">Unter 15 Min</option>
+          <option value="15–30 Min">15–30 Min</option>
+          <option value="Über 30 Min">Über 30 Min</option>
+        </select>
+      </div>
+
+      <div className="sidebar-section mt-4">
+        <div className="section-title">Schwierigkeit</div>
+        <select
+          className="form-select"
+          value={filters.difficulty}
+          onChange={(e) => handleChange("difficulty", e.target.value)}
+        >
+          <option value="">Alle</option>
+          <option value="easy">Einfach</option>
+          <option value="medium">Mittel</option>
+          <option value="hard">Schwer</option>
+        </select>
+      </div>
     </div>
   );
 }

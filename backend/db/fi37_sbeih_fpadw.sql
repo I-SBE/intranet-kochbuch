@@ -34,7 +34,10 @@ CREATE TABLE IF NOT EXISTS recipes (
   title VARCHAR(255) NOT NULL,
   ingredients TEXT NOT NULL,
   steps TEXT NOT NULL,
-  is_public BOOLEAN DEFAULT TRUE,
+  is_public BOOLEAN DEFAULT TRUE NOT NULL,
+  category VARCHAR(50) NOT NULL,
+  duration INT NOT NULL,
+  difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
