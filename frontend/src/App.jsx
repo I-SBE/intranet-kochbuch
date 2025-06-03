@@ -20,6 +20,7 @@ import About from "./pages/About.jsx";
 import Kontakt from "./pages/Kontakt.jsx";
 import ChangePass from "./pages/ChangePassword.jsx";
 import DeleteAccount from "./pages/DeleteAccount.jsx";
+import NotFound from "./pages/NotFound";
 
 import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer";
@@ -55,6 +56,7 @@ function App() {
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/change-password" element={<ChangePass />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </Container>

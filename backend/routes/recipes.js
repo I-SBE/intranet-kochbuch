@@ -17,7 +17,16 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   }
 });
-const upload = multer({ storage });
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Nur Bilddateien erlaubt."), false);
+    }
+    cb(null, true);
+  }
+});
 
 //--------------------------------------------------------------------------
 
@@ -73,6 +82,71 @@ router.get('/', async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+router.get('/favorites', isAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const recipes = await pool.query(
+      `SELECT r.* FROM recipes r
+       JOIN favorites f ON r.id = f.recipe_id
+       WHERE f.user_id = ?`,
+      [userId]
+    );
+
+    for (let recipe of recipes) {
+      const images = await pool.query(
+        'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
+        [recipe.id]
+      );
+      recipe.images = images.map(img => img.image_url);
+    }
+
+    res.json({ favorites: recipes });
+  } catch (err) {
+    res.status(500).json({ message: 'Fehler beim Laden der Favoriten.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.post('/favorites/:recipeId', isAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const recipeId = req.params.recipeId;
+
+  try {
+    await pool.query(
+      'INSERT INTO favorites (user_id, recipe_id) VALUES (?, ?)',
+      [userId, recipeId]
+    );
+    res.status(201).json({ message: 'Rezept wurde zur Favoritenliste hinzugefügt.' });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      res.status(409).json({ message: 'Dieses Rezept ist bereits in deinen Favoriten.' });
+    } else {
+      res.status(500).json({ message: 'Fehler beim Hinzufügen zur Favoritenliste.' });
+    }
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.delete('/favorites/:recipeId', isAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const recipeId = req.params.recipeId;
+
+  try {
+    await pool.query(
+      'DELETE FROM favorites WHERE user_id = ? AND recipe_id = ?',
+      [userId, recipeId]
+    );
+    res.json({ message: 'Rezept wurde aus Favoriten entfernt.' });
+  } catch (err) {
+    res.status(500).json({ message: 'Fehler beim Entfernen aus Favoriten.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
 router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) => {
   const { title, ingredients, steps, is_public, category, duration, difficulty } = req.body;
   const user_id = req.user.id;
@@ -107,85 +181,62 @@ router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) =
 
 //--------------------------------------------------------------------------
 
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.post('/:id/images', isAuthenticated, upload.array('images', 10), async (req, res) => {
   const { id } = req.params;
+  const user_id = req.user.id;
+  const files = req.files || [];
 
   try {
-    const recipeRows = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
-
-    if (recipeRows.length === 0) {
-      return res.status(404).json({ message: 'Rezept wurde nicht gefunden.' });
-    }
-
-    const recipe = recipeRows[0];
-
-    const images = await pool.query(
-      'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
-      [id]
+    const recipeCheck = await pool.query(
+      'SELECT * FROM recipes WHERE id = ? AND user_id = ?',
+      [id, user_id]
     );
 
-    recipe.images = images.map(img => img.image_url);
-
-    res.json(recipe);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Fehler beim Abrufen des Rezepts.' });
-  }
-});
-
-//--------------------------------------------------------------------------
-
-router.put('/:id', isAuthenticated, async (req, res) => {
-  const { id } = req.params;
-  const { title, ingredients, steps, is_public, category, duration, difficulty } = req.body;
-  const user_id = req.user.id;
-
-  if (!title || !ingredients || !steps) {
-    return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });
-  }
-
-  try {
-    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
-
-    if (existing.length === 0) {
+    if (recipeCheck.length === 0) {
       return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
     }
 
-    await pool.query(
-      `UPDATE recipes 
-      SET title = ?, ingredients = ?, steps = ?, is_public = ?, category = ?, duration = ?, difficulty = ?
-      WHERE id = ? AND user_id = ?`,
-      [title, ingredients, steps, !!is_public, category, duration, difficulty, id, user_id]
-    );
+    const title = recipeCheck[0].title || 'rezept';
 
-    res.status(200).json({ message: 'Rezept erfolgreich aktualisiert.' });
-  } catch (err) {
-    console.error('Fehler beim Aktualisieren des Rezepts:', err);
-    res.status(500).json({ message: 'Fehler beim Aktualisieren.' });
-  }
-});
+    const slugify = (str) => {
+      return str
+        .toLowerCase()
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    };
 
-//--------------------------------------------------------------------------
+    const newImages = [];
 
-router.delete('/:id', isAuthenticated, async (req, res) => {
-  const { id } = req.params;
-  const user_id = req.user.id;
+    for (const file of files) {
+      const ext = file.originalname.split('.').pop();
+      const slug = slugify(title);
+      const newFileName = `${slug}-user${user_id}-${Date.now()}-${Math.floor(Math.random() * 1000)}.${ext}`;
 
-  try {
-    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+      const fs = await import('fs');
+      const oldPath = file.path;
+      const newPath = `uploads/${newFileName}`;
+      fs.renameSync(oldPath, newPath);
 
-    if (existing.length === 0) {
-      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
+      await pool.query(
+        'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
+        [id, newFileName]
+      );
+
+      newImages.push(newFileName);
     }
 
-    await pool.query('DELETE FROM recipe_images WHERE recipe_id = ?', [id]);
+    res.status(200).json({
+      message: 'Bilder erfolgreich hinzugefügt.',
+      newImages
+    });
 
-    await pool.query('DELETE FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
-
-    res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
   } catch (err) {
-    console.error('Fehler beim Löschen des Rezepts:', err);
-    res.status(500).json({ message: 'Fehler beim Löschen.' });
+    console.error('Fehler beim Hochladen der Bilder:', err);
+    res.status(500).json({ message: 'Fehler beim Hochladen.' });
   }
 });
 
@@ -311,63 +362,95 @@ router.delete('/:id/images/:imageName', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
-router.post('/:id/images', isAuthenticated, upload.array('images', 10), async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
-  const user_id = req.user.id;
-  const files = req.files || [];
 
   try {
-    const recipeCheck = await pool.query(
-      'SELECT * FROM recipes WHERE id = ? AND user_id = ?',
-      [id, user_id]
+    const recipeRows = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
+
+    if (recipeRows.length === 0) {
+      return res.status(404).json({ message: 'Rezept wurde nicht gefunden.' });
+    }
+
+    const recipe = recipeRows[0];
+
+    const images = await pool.query(
+      'SELECT image_url FROM recipe_images WHERE recipe_id = ?',
+      [id]
     );
 
-    if (recipeCheck.length === 0) {
+    recipe.images = images.map(img => img.image_url);
+
+    res.json(recipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Fehler beim Abrufen des Rezepts.' });
+  }
+});
+
+//--------------------------------------------------------------------------
+
+router.put('/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const { title, ingredients, steps, is_public, category, duration, difficulty } = req.body;
+  const user_id = req.user.id;
+
+  if (!title || !ingredients || !steps) {
+    return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });
+  }
+
+  try {
+    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+
+    if (existing.length === 0) {
       return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
     }
 
-    const title = recipeCheck[0].title || 'rezept';
+    await pool.query(
+      `UPDATE recipes 
+      SET title = ?, ingredients = ?, steps = ?, is_public = ?, category = ?, duration = ?, difficulty = ?
+      WHERE id = ? AND user_id = ?`,
+      [title, ingredients, steps, !!is_public, category, duration, difficulty, id, user_id]
+    );
 
-    const slugify = (str) => {
-      return str
-        .toLowerCase()
-        .replace(/ä/g, 'ae')
-        .replace(/ö/g, 'oe')
-        .replace(/ü/g, 'ue')
-        .replace(/ß/g, 'ss')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    };
+    res.status(200).json({ message: 'Rezept erfolgreich aktualisiert.' });
+  } catch (err) {
+    console.error('Fehler beim Aktualisieren des Rezepts:', err);
+    res.status(500).json({ message: 'Fehler beim Aktualisieren.' });
+  }
+});
 
-    const newImages = [];
+//--------------------------------------------------------------------------
 
-    for (const file of files) {
-      const ext = file.originalname.split('.').pop();
-      const slug = slugify(title);
-      const newFileName = `${slug}-user${user_id}-${Date.now()}-${Math.floor(Math.random() * 1000)}.${ext}`;
+router.delete('/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
 
-      const fs = await import('fs');
-      const oldPath = file.path;
-      const newPath = `uploads/${newFileName}`;
-      fs.renameSync(oldPath, newPath);
+  try {
+    const existing = await pool.query('SELECT * FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
 
-      await pool.query(
-        'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
-        [id, newFileName]
-      );
-
-      newImages.push(newFileName);
+    if (existing.length === 0) {
+      return res.status(403).json({ message: 'Kein Zugriff oder Rezept nicht gefunden.' });
     }
 
-    res.status(200).json({
-      message: 'Bilder erfolgreich hinzugefügt.',
-      newImages
-    });
+    await pool.query('DELETE FROM recipe_images WHERE recipe_id = ?', [id]);
 
+    await pool.query('DELETE FROM recipes WHERE id = ? AND user_id = ?', [id, user_id]);
+
+    res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
   } catch (err) {
-    console.error('Fehler beim Hochladen der Bilder:', err);
-    res.status(500).json({ message: 'Fehler beim Hochladen.' });
+    console.error('Fehler beim Löschen des Rezepts:', err);
+    res.status(500).json({ message: 'Fehler beim Löschen.' });
   }
+});
+
+//--------------------------------------------------------------------------
+
+router.use((err, req, res, next) => {
+  if (err.message === "Nur Bilddateien erlaubt.") {
+    return res.status(400).json({ message: "Nur Bilddateien sind erlaubt." });
+  }
+  next(err);
 });
 
 //--------------------------------------------------------------------------

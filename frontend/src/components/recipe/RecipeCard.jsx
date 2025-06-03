@@ -7,10 +7,11 @@ import "../../styles/RecipeCard.css";
 
 //--------------------------------------------------------------------------
 
-function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit }) {
+function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, favorites = [], onFavoriteAdded }) {
 
   const navigate = useNavigate();
   const isPublic = recipe.is_public === true || recipe.is_public === 1 || recipe.is_public === "true";
+  const isFavorite = favorites.some(fav => fav.id === recipe.id);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -20,9 +21,33 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit }) {
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  const handleFavorite = (e) => {
+  const handleFavorite = async (e) => {
     e.stopPropagation();
-    alert("Zur Favoritenliste hinzugefügt!");
+    const token = localStorage.getItem("token");
+
+    const method = isFavorite ? "DELETE" : "POST";
+
+    try {
+      const response = await fetch(`http://backend-api.com:3001/api/recipes/favorites/${recipe.id}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 409)return;
+        throw new Error(data.message || "Fehler beim Favoriten-Update.");
+      }
+
+      if (onFavoriteAdded) onFavoriteAdded(recipe);
+      
+    } catch (err) {
+      alert("Fehler: " + err.message);
+      console.log(err.message);
+    }
   };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,7 +79,12 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit }) {
           />
         )}
 
-        <Button size="sm" onClick={handleFavorite} className="recipe-fav-btn" title="Zu Favoriten" >
+        <Button 
+          size="sm"
+          onClick={handleFavorite}
+          className="recipe-fav-btn"
+          title="Zu Favoriten"
+          style={{ background: isFavorite ? "#ff8800" : "#ff880000" }}>
           <FiHeart />
         </Button>
 
@@ -81,11 +111,11 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit }) {
         <Card.Text className="recipe-card-text text-muted small">
           {recipe.ingredients || "Rezept entdecken!"}
           {showPrivacy && (
-            <div className="small mt-1">
+            <span className="small mt-1">
               {isPublic
                 ? <span style={{ color: "green" }}>🌍 Öffentlich</span>
                 : <span style={{ color: "red" }}>🔴 Privat</span>}
-            </div>
+            </span>
           )}
         </Card.Text>
 

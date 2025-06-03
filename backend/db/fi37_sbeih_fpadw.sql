@@ -71,6 +71,17 @@ CREATE TABLE IF NOT EXISTS comments (
 
 -----------------------------------------------------
 
+-- 6. Create Table: favorites
+
+CREATE TABLE IF NOT EXISTS favorites (
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (user_id, recipe_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+);
+
+
 -- for the Import in DB:
 
 -- mysql -u root -p < db/fi37_sbeih_fpadw.sql

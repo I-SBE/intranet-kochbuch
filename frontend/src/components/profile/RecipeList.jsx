@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 //--------------------------------------------------------------------------
 
-function RecipeList({ recipes, recipeError, onRefresh }) {
+function RecipeList({ recipes, recipeError, onRefresh, onFavoriteAdded, favorites = [] }) {
 
   const navigate = useNavigate();
 
@@ -28,6 +28,8 @@ function RecipeList({ recipes, recipeError, onRefresh }) {
           recipe={recipe}
           editable={true}
           showPrivacy={true}
+          favorites={favorites}
+          onFavoriteAdded={onFavoriteAdded}
           onEdit={(id) => {
             navigate(`/edit-recipe/${id}`);
             onRefresh();
