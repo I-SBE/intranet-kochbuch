@@ -97,7 +97,7 @@ function Profile() {
 
           <ToggleFormButton showForm={showForm} toggleForm={() => setShowForm(!showForm)} />
 
-          {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
+          {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} onCloseForm={() => setShowForm(false)}/>}
 
           <h4 className="mb-3" style={{ marginTop: "3rem" }}>Meine Rezepte</h4>
           <hr className="profile-divider" />

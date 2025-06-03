@@ -7,7 +7,7 @@ import "../../styles/RecipeForm.css";
 
 //--------------------------------------------------------------------------
 
-function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {} }) {
+function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", initialData = {} }) {
 
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
@@ -25,6 +25,9 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
   const [selectedImageToDelete, setSelectedImageToDelete] = useState(null);
   const [previewIndexToDelete, setPreviewIndexToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [category, setCategory] = useState("");
+  const [duration, setDuration] = useState("");
+  const [difficulty, setDifficulty] = useState("");
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -34,6 +37,10 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       setIngredients(initialData.ingredients || "");
       setSteps(initialData.steps || "");
       setIsPublic(initialData.is_public === true || initialData.is_public === 1);
+      setCategory(initialData.category || "");
+      setDuration(initialData.duration || "");
+      setDifficulty(initialData.difficulty || "");
+
       if (Array.isArray(initialData.images)) {
         setExistingImages(initialData.images);
       }
@@ -47,7 +54,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
     setError("");
     setSuccess("");
 
-    if (!title || !ingredients || !steps) {
+    if (!title || !ingredients || !steps || !category || !duration || !difficulty) {
       setError("Bitte alle Felder ausfüllen.");
       return;
     }
@@ -72,7 +79,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       }
 
       if (mode === "edit" && onSubmit) {
-        const updatedData = { title, ingredients, steps, is_public: isPublic };
+        const updatedData = { title, ingredients, steps, is_public: isPublic, category, duration, difficulty };
         await onSubmit(updatedData);
         setSuccess("Rezept erfolgreich aktualisiert!");
       } else {
@@ -81,6 +88,10 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
         formData.append("ingredients", ingredients);
         formData.append("steps", steps);
         formData.append("is_public", isPublic);
+        formData.append("category", category);
+        formData.append("duration", duration);
+        formData.append("difficulty", difficulty);
+
         newImages.forEach((img) => formData.append("images", img));
 
         const response = await fetch("http://backend-api.com:3001/api/recipes", {
@@ -99,6 +110,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
         setNewImages([]);
         setPreviewImages([]);
         if (onRecipeAdded) onRecipeAdded();
+        if (onCloseForm) onCloseForm();
       }
 
     } catch (err) {
@@ -269,7 +281,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
 
       <Form.Group controlId="is_public" className="mb-3">
         <div className="visibility-row">
-          <Form.Label className="visibility-label">Sichtbarkeit</Form.Label>
+          <Form.Label className="visibility-label">Sichtbarkeit:</Form.Label>
           <div className="toggle-switch">
             <label className="switch">
               <input
@@ -284,6 +296,39 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
         </div>
       </Form.Group>
 
+      <div className="form-row-3">
+        <Form.Group className="flex-item">
+          <Form.Label>Kategorie</Form.Label>
+          <Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="">Bitte wählen</option>
+            <option value="breakfast">Frühstück</option>
+            <option value="lunch">Mittagessen</option>
+            <option value="dinner">Abendessen</option>
+            <option value="dessert">Desserts</option>
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group className="flex-item">
+          <Form.Label>Zubereitungszeit (in Minuten)</Form.Label>
+          <Form.Control
+            type="number"
+            min="1"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            placeholder="z.B. 20"
+          />
+        </Form.Group>
+
+        <Form.Group className="flex-item">
+          <Form.Label>Schwierigkeit</Form.Label>
+          <Form.Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+            <option value="">Bitte wählen</option>
+            <option value="easy">Einfach</option>
+            <option value="medium">Mittel</option>
+            <option value="hard">Schwer</option>
+          </Form.Select>
+        </Form.Group>
+      </div>
 
 
       <Form.Group className="mb-3">
@@ -302,7 +347,15 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       </Form.Group>
 
             
-      <Button variant="warning" type="submit" className="custom-nav-link">
+      <Button
+        variant="warning"
+        type="submit"
+        className="custom-nav-link"
+        style={{ 
+              alignContent: "center",
+              marginTop:"5rem",
+            }}
+      >
         {mode === "edit" ? "Speichern" : "Veröffentlichen"}
       </Button>
     </Form>

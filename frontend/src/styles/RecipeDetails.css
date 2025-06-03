@@ -157,3 +157,23 @@
   right: 20px;
   z-index: 1;
 }
+
+.recipe-meta-box {
+  background: #1c1c1c;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #ffffff4f;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.recipe-meta-box h5 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #ffcc88;
+}
+
+.recipe-meta-box p {
+  margin: 0.2rem 0;
+}

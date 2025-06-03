@@ -207,7 +207,15 @@ function RecipeDetails() {
             <h5>Zutaten:</h5>
             <p style={{ whiteSpace: "pre-line" }}>{recipe.ingredients}</p>
           </div>
+
+          <div className="recipe-meta-box">
+            <h5>Informationen:</h5>
+            <p><strong style={{color:"#fd8f00"}}>Kategorie: </strong> {recipe.category || "Nicht angegeben"}</p>
+            <p><strong style={{color:"#fd8f00"}}>Dauer:</strong> {recipe.duration ? `${recipe.duration} Minuten` : "Nicht angegeben"}</p>
+            <p><strong style={{color:"#fd8f00"}}>Schwierigkeit:</strong> {recipe.difficulty || "Nicht angegeben"}</p>
+          </div>
         </div>
+
 
         <div className="recipe-steps-section">
           <h5>Zubereitung:</h5>

@@ -28,6 +28,8 @@ const upload = multer({
   }
 });
 
+const tempUpload = multer({ dest: 'uploads/' });
+
 //--------------------------------------------------------------------------
 
 router.get('/', async (req, res) => {
@@ -147,7 +149,7 @@ router.delete('/favorites/:recipeId', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
-router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) => {
+router.post('/', isAuthenticated, tempUpload.array('images', 10), async (req, res) => {
   const { title, ingredients, steps, is_public, category, duration, difficulty } = req.body;
   const user_id = req.user.id;
   const files = req.files || [];
@@ -166,9 +168,19 @@ router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) =
     const recipe_id = result.insertId;
 
     for (const file of files) {
+      const ext = file.originalname.split('.').pop();
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      const newFileName = `${slug}-user${user_id}-${uniqueSuffix}.${ext}`;
+
+      const fs = await import('fs');
+      const oldPath = file.path;
+      const newPath = `uploads/${newFileName}`;
+      fs.renameSync(oldPath, newPath);
+
       await pool.query(
         'INSERT INTO recipe_images (recipe_id, image_url) VALUES (?, ?)',
-        [recipe_id, file.filename]
+        [recipe_id, newFileName]
       );
     }
 
@@ -181,7 +193,7 @@ router.post('/', isAuthenticated, upload.array('images', 10), async (req, res) =
 
 //--------------------------------------------------------------------------
 
-router.post('/:id/images', isAuthenticated, upload.array('images', 10), async (req, res) => {
+router.post('/:id/images', isAuthenticated, tempUpload.array('images', 10), async (req, res) => {
   const { id } = req.params;
   const user_id = req.user.id;
   const files = req.files || [];
@@ -213,8 +225,9 @@ router.post('/:id/images', isAuthenticated, upload.array('images', 10), async (r
 
     for (const file of files) {
       const ext = file.originalname.split('.').pop();
-      const slug = slugify(title);
-      const newFileName = `${slug}-user${user_id}-${Date.now()}-${Math.floor(Math.random() * 1000)}.${ext}`;
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      const newFileName = `${slug}-user${user_id}-${uniqueSuffix}.${ext}`;
 
       const fs = await import('fs');
       const oldPath = file.path;
