@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useFavorites } from "../context/FavoritesContext";
 
 import RecipeCard from "../components/recipe/RecipeCard";
 import Sidebar from "../components/layout/Sidebar";
@@ -16,6 +17,8 @@ function RecipeGallery() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { favorites, handleFavoriteAdded, handleFavoriteDeleted } = useFavorites();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -62,6 +65,7 @@ function RecipeGallery() {
     <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="gallery-page">
         <div className="gallery-layout">
+
           <div className="sidebar-container">
             <Sidebar onFilterChange={handleFilterChange} />
           </div>
@@ -73,7 +77,13 @@ function RecipeGallery() {
             <div className="card-grid">
               {recipes.length > 0 ? (
                 recipes.map(recipe => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
+                  <RecipeCard 
+                    key={recipe.id}
+                    recipe={recipe}
+                    favorites={favorites}
+                    onFavoriteAdded={handleFavoriteAdded}
+                    onFavoriteDeleted={handleFavoriteDeleted}
+                     />
                 ))
               ) : (
                 <p className="no-result">Keine Rezepte gefunden!</p>

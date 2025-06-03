@@ -1,8 +1,9 @@
-import { Button, Spinner, Alert } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
+
 import RecipeCard from "../components/recipe/RecipeCard";
 import ProfileSpinnerOrError from "../components/profile/ProfileSpinnerOrError";
 
@@ -18,6 +19,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
+  const { favorites, handleFavoriteAdded, handleFavoriteDeleted } = useFavorites();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,7 +34,6 @@ function Home() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
-
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -76,7 +77,12 @@ function Home() {
 
           <div className="card-grid px-4">
             {recipes.slice(0, 8).map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                favorites={favorites}
+                onFavoriteAdded={handleFavoriteAdded}
+                onFavoriteDeleted={handleFavoriteDeleted}/>
             ))}
           </div>
 
