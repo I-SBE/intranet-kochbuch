@@ -3,6 +3,8 @@ import { Form, Button, Alert } from "react-bootstrap";
 
 import ConfirmModal from "../ConfirmModal";
 
+import "../../styles/RecipeForm.css";
+
 //--------------------------------------------------------------------------
 
 function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {} }) {
@@ -141,7 +143,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Form onSubmit={handleSubmit} className="mb-5">
+    <Form onSubmit={handleSubmit} className="recipe-form">
       <ConfirmModal
         show={showDeleteModal}
         onHide={() => {
@@ -188,7 +190,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
       {success && <Alert variant="success">{success}</Alert>}
 
       <Form.Group className="mb-3">
-        <Form.Label>Bilder</Form.Label>
+        <Form.Label style={{fontSize:"24px",padding:"20px"}}>Bilder</Form.Label>
         <div className="d-flex flex-wrap gap-3">
           {existingImages.map((img, idx) => (
             <div key={idx} style={{ position: "relative" }}>
@@ -245,7 +247,7 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
           ))}
 
           <div
-            style={{ width: "120px", height: "120px", borderRadius: "8px", border: "1px dashed #aaa", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", backgroundColor: "#f9f9f9" }}
+            className="image-upload"
             onClick={() => document.getElementById("new-image-upload").click()}
           >
             <img
@@ -265,25 +267,23 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
         </div>
       </Form.Group>
 
-      <Form.Group controlId="is_public">
-      <Form.Label>Sichtbarkeit</Form.Label>
-      <Form.Check
-        type="radio"
-        label="Öffentlich"
-        name="is_public"
-        value="true"
-        checked={isPublic === true}
-        onChange={() => setIsPublic(true)}
-      />
-      <Form.Check
-        type="radio"
-        label="Privat"
-        name="is_public"
-        value="false"
-        checked={isPublic === false}
-        onChange={() => setIsPublic(false)}
-      />
-    </Form.Group>
+      <Form.Group controlId="is_public" className="mb-3">
+        <div className="visibility-row">
+          <Form.Label className="visibility-label">Sichtbarkeit</Form.Label>
+          <div className="toggle-switch">
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={() => setIsPublic(!isPublic)}
+              />
+              <span className="slider"></span>
+            </label>
+            <span className="label-text">{isPublic ? "Öffentlich" : "Privat"}</span>
+          </div>
+        </div>
+      </Form.Group>
+
 
 
       <Form.Group className="mb-3">
@@ -301,7 +301,8 @@ function RecipeForm({ onRecipeAdded, onSubmit, mode = "create", initialData = {}
         <Form.Control as="textarea" rows={3} value={steps} onChange={(e) => setSteps(e.target.value)} />
       </Form.Group>
 
-      <Button variant="primary" type="submit">
+            
+      <Button variant="warning" type="submit" className="custom-nav-link">
         {mode === "edit" ? "Speichern" : "Veröffentlichen"}
       </Button>
     </Form>

@@ -45,36 +45,47 @@ function DeleteAccount() {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Container style={{ maxWidth: "500px", marginTop: "100px" }}>
-      <h2 className="mb-4 text-danger">Konto löschen</h2>
+    <div className="kontakt-container">
+      <div className="kontakt-card">
+        <h1 className="text-danger">Konto löschen</h1>
 
-      {message && (
-        <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>{message}</Alert>
-      )}
+        {message && (
+          <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>
+            {message}
+          </Alert>
+        )}
 
-      <p>Bist du sicher, dass du dein Konto <strong>dauerhaft</strong> löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        <p>
+          Bist du sicher, dass du dein Konto <strong>dauerhaft</strong> löschen möchtest?
+          Diese Aktion kann <strong>nicht rückgängig</strong> gemacht werden.
+        </p>
 
-      <Button variant="danger" onClick={() => setShowModal(true)} disabled={loading}>
-        Konto löschen
-      </Button>
+        <Button 
+          variant="danger"
+          className="custom-nav-link"
+          onClick={() => setShowModal(true)}
+          disabled={loading}>
+          Konto löschen
+        </Button>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Bestätigung</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Möchtest du dein Konto wirklich löschen? Diese Aktion ist <strong>unumkehrbar</strong>.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Abbrechen
-          </Button>
-          <Button variant="danger" onClick={handleDelete} disabled={loading}>
-            {loading ? <Spinner animation="border" size="sm" /> : "Ja, löschen"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Bestätigung</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Möchtest du dein Konto wirklich löschen? Diese Aktion ist <strong>unumkehrbar</strong>.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Abbrechen
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={loading}>
+              {loading ? <Spinner animation="border" size="sm" /> : "Ja, löschen"}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </div>
   );
 }
 

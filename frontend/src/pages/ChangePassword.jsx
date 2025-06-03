@@ -52,49 +52,56 @@ function ChangePassword() {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <Container style={{ maxWidth: "500px", marginTop: "100px" }}>
-      <h2 className="mb-4">Passwort ändern</h2>
+    <div className="kontakt-container">
+      <div className="kontakt-card">
+        <h1>Passwort ändern</h1>
 
-      {message && (
-        <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>{message}</Alert>
-      )}
+        {message && (
+          <Alert variant={message.includes("erfolgreich") ? "success" : "danger"}>
+            {message}
+          </Alert>
+        )}
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Aktuelles Passwort</Form.Label>
-          <Form.Control
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Aktuelles Passwort</Form.Label>
+            <Form.Control
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Neues Passwort</Form.Label>
-          <Form.Control
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Neues Passwort</Form.Label>
+            <Form.Control
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-4">
-          <Form.Label>Neues Passwort bestätigen</Form.Label>
-          <Form.Control
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-4">
+            <Form.Label>Neues Passwort bestätigen</Form.Label>
+            <Form.Control
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Button type="submit" variant="primary">
-          Passwort speichern
-        </Button>
-      </Form>
-    </Container>
+          <Button 
+            type="submit" 
+            variant="warning" 
+            className="custom-nav-link">
+            Passwort speichern
+          </Button>
+        </Form>
+      </div>
+    </div>
   );
 }
 

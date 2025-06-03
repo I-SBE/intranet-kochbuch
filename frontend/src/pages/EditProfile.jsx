@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap";
 
+import "../styles/RecipeForm.css";
+
 //--------------------------------------------------------------------------
 
 function EditProfile() {
@@ -97,82 +99,91 @@ function EditProfile() {
   if (loading) return <Spinner animation="border" className="mt-5" />;
 
   return (
-    <Container style={{ maxWidth: "600px", marginTop: "100px" }}>
-      <h2 className="mb-4">Profil bearbeiten</h2>
+    <div className="kontakt-container">
+      <div className="kontakt-card">
+        <h1>Profil bearbeiten</h1>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleSubmit} encType="multipart/form-data">
-
-        <div className="text-center mb-3">
-          <label htmlFor="image-upload">
-            <div
-              className="image-preview"
-              style={{
-                backgroundImage: `url(${preview || "/default-profile.png"})`,
-                width: 100,
-                height: 100,
-                borderRadius: "50%",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                margin: "0 auto"
-              }}
+        <Form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="text-center mb-4">
+            <label htmlFor="image-upload">
+              <div
+                className="image-preview"
+                style={{
+                  backgroundImage: `url(${preview || "/default-profile.png"})`
+                }}
+              />
+            </label>
+            <Form.Control
+              id="image-upload"
+              type="file"
+              name="image"
+              onChange={handleChange}
+              style={{ display: "none" }}
+              accept="image/*"
             />
-          </label>
+          </div>
 
-          <Form.Control
-            id="image-upload"
-            type="file"
-            name="image"
-            onChange={handleChange}
-            style={{ display: "none" }}
-            accept="image/*"
-          />
-        </div>
+          <Form.Group className="mb-3">
+            <Form.Label>Vorname</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Vorname</Form.Label>
-          <Form.Control
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Nachname</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Nachname</Form.Label>
-          <Form.Control
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="mb-4">
+            <Form.Label>E-Mail</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <div>
+            <Button 
+              type="submit"
+              variant="warning"
+              className="w-100 mb-3 custom-nav-link"
+              style={{justifyContent:"center", maxWidth:"200px"}}>
+              Speichern
+            </Button>
+          </div>
+          <Button 
+            variant="outline-secondary"
+            className="custom-nav-link"
+            onClick={() => navigate("/change-password")}>
+            Passwort ändern
+          </Button>
 
-        <Form.Group className="mb-4">
-          <Form.Label>E-Mail</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
-
-        <Button type="submit" variant="primary" className="mb-3">
-          Speichern
-        </Button>
-      </Form>
-      <div className="d-flex flex-column gap-2">
-        <Button className="mb-4" variant="outline-secondary" onClick={() => navigate("/change-password")}>Passwort ändern</Button>
-        <Button variant="outline-danger" onClick={() => navigate("/delete-account")}>Konto löschen</Button>
+          <Button 
+            variant="outline-danger"
+            className="custom-nav-link"
+            style={{background:"red"}}
+            onClick={() => navigate("/delete-account")}>
+            Konto löschen
+          </Button>
+        </Form>
       </div>
-    </Container>
+    </div>
   );
 }
 

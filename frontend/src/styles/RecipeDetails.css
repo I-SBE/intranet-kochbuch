@@ -1,0 +1,159 @@
+.recipe-container {
+  max-width: none;
+  width: 100%;
+  padding: 2rem 0;
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.recipe-inner {
+  max-width: 1000px;
+  min-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.recipe-title {
+  font-size: 2rem;
+  text-align: center;
+  color: #ff8800;
+  margin-bottom: 0;
+}
+
+.recipe-edit-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.recipe-top-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.recipe-ingredients {
+  background: #1c1c1c;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #ffffff4f;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.recipe-ingredients h5,
+.recipe-steps-section h5 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #ffcc88;
+}
+
+.recipe-steps-section {
+  background: #1c1c1c;
+  color: #eee;
+  padding: 1.2rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #ffffff4f;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.recipe-date {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.comment-section {
+  background: #1c1c1c;
+  color: #ffcc88;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.comment-box {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.comment-form {
+  margin-bottom: 2rem;
+}
+
+.comment-edited {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.comment-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.comment-time {
+  margin-bottom: 0.3rem;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.recipe-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.recipe-carousel {
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 136, 0, 0.8);
+  margin-top: 5rem;
+}
+
+.recipe-carousel .carousel-control-prev-icon,
+.recipe-carousel .carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background-size: 70%;
+  padding: 50px;
+}
+
+.recipe-carousel .carousel-item img {
+  width: 100%;
+  height: 500px;
+  object-fit: contain;
+}
+
+.recipe-carousel-wrapper .edit-btn {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  z-index: 1;
+}

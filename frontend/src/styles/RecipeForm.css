@@ -1,0 +1,168 @@
+.recipe-form {
+  width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 0 30px #ff8800;
+}
+
+.recipe-form h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.recipe-form .form-label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.recipe-form .form-control,
+.recipe-form .form-check-input {
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 0.6rem 1rem;
+}
+
+.recipe-form .form-control:focus {
+  border-color: #ff8800;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.recipe-form .form-check {
+  margin-bottom: 2rem;
+  
+}
+
+.image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.image-preview-container > div {
+  position: relative;
+}
+
+.image-preview-container img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.image-preview-container button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border-radius: 50%;
+  padding: 0;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 34px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background-color: white;
+  bottom: 3px;
+  left: 3px;
+  transition: 0.4s;
+}
+
+.switch input:checked + .slider {
+  background-color: #ff8800;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(32px);
+}
+
+.label-text {
+  font-weight: 500;
+  color: #fff;
+}
+.visibility-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.visibility-label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  color: #fff;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.label-text {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.image-upload {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 2px dashed #aaaaaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: "pointer";
+  transition: all 0.3s ease;
+}
+.image-upload:hover{
+    box-shadow:
+    0 10px 50px rgba(255, 136, 0, 0.5),
+    inset 0 0 25px rgba(255, 136, 0, 0.1);
+  transition: all 0.3s ease;
+}

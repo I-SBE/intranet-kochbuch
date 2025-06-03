@@ -79,16 +79,15 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit }) {
         <Card.Title className="recipe-card-title">{recipe.title}</Card.Title>
 
         <Card.Text className="recipe-card-text text-muted small">
-          {recipe.shortDescription || "Leckeres Rezept entdecken!"}
+          {recipe.ingredients || "Rezept entdecken!"}
+          {showPrivacy && (
+            <div className="small mt-1">
+              {isPublic
+                ? <span style={{ color: "green" }}>🌍 Öffentlich</span>
+                : <span style={{ color: "red" }}>🔴 Privat</span>}
+            </div>
+          )}
         </Card.Text>
-
-        {showPrivacy && (
-          <div className="small mt-1">
-            {isPublic
-              ? <span style={{ color: "green" }}>🌍 Öffentlich</span>
-              : <span style={{ color: "red" }}>🔴 Privat</span>}
-          </div>
-        )}
 
         <Button className="recipe-read-btn" onClick={handleNavigate}>
           Mehr lesen <FiArrowRightCircle className="ms-1" />

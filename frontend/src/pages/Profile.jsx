@@ -79,20 +79,21 @@ function Profile() {
   return (
     <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="profile-page" style={{ marginTop: "100px" }}>
-        <ProfileHeader
-          user={user}
-          totalRecipes={totalRecipes}
-          publicCount={publicCount}
-          privateCount={privateCount}
-        />
+        <div className="centered-content">
+          <ProfileHeader
+            user={user}
+            totalRecipes={totalRecipes}
+            publicCount={publicCount}
+            privateCount={privateCount}
+          />
+          
+          <ToggleFormButton showForm={showForm} toggleForm={() => setShowForm(!showForm)} />
+  
+          {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
 
-        <ToggleFormButton showForm={showForm} toggleForm={() => setShowForm(!showForm)} />
-
-        {showForm && <RecipeForm onRecipeAdded={fetchUserRecipes} />}
-
-        <hr className="profile-divider" />
-
-        <h4 className="mb-3" style={{ marginTop: "3rem" }}>Meine Rezepte</h4>
+          <h4 className="mb-3" style={{ marginTop: "3rem" }}>Meine Rezepte</h4>
+          <hr className="profile-divider" />
+        </div>
 
         <RecipeList
           recipes={recipes}

@@ -16,15 +16,6 @@
 
 /* ========================================= */
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2rem;
-  justify-content: center;
-}
-
-/* ========================================= */
-
 .section-title {
   font-size: 2rem;
   color: #ffcc70;

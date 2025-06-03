@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Spinner, Alert, Carousel, Button } from "react-bootstrap";
+import { Container, Carousel, Button } from "react-bootstrap";
 
 import { fetchUserProfile } from "../api-services/auth";
 import ProfileSpinnerOrError from "../components/profile/ProfileSpinnerOrError";
+import ConfirmModal from "../components/ConfirmModal";
 
 import { format } from "timeago.js";
 import de from "timeago.js/lib/lang/de";
 import { register } from "timeago.js";
+import { FiEdit2, FiTrash2, FiMessageCircle } from "react-icons/fi";
+
+import "../styles/RecipeDetails.css";
 
 register("de", de);
 
@@ -24,6 +28,11 @@ function RecipeDetails() {
   const [commentError, setCommentError] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -62,6 +71,8 @@ function RecipeDetails() {
         setComments(commentsData);
       } catch (err) {
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -70,7 +81,7 @@ function RecipeDetails() {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   const handleSubmitComment = async () => {
+  const handleSubmitComment = async () => {
     const token = localStorage.getItem("token");
     if (!newComment.trim()) {
       setCommentError("Kommentar darf nicht leer sein.");
@@ -100,28 +111,31 @@ function RecipeDetails() {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteConfirmed = async () => {
     const token = localStorage.getItem("token");
+    if (!selectedCommentId) return;
 
-    if (!window.confirm("Möchtest du diesen Kommentar wirklich löschen?")) return;
+    setDeleteLoading(true);
 
     try {
-      const res = await fetch(`http://backend-api.com:3001/api/comments/${commentId}`, {
+      const res = await fetch(`http://backend-api.com:3001/api/comments/${selectedCommentId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!res.ok) throw new Error("Fehler beim Löschen des Kommentars.");
 
-      setComments(prev => prev.filter(c => c.id !== commentId));
+      setComments((prev) => prev.filter((c) => c.id !== selectedCommentId));
+      setSelectedCommentId(null);
+      setShowDeleteModal(false);
     } catch (err) {
       alert("Fehler: " + err.message);
+    } finally {
+      setDeleteLoading(false);
     }
   };
-
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const handleUpdateComment = async (commentId) => {
     const token = localStorage.getItem("token");
@@ -131,15 +145,15 @@ function RecipeDetails() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ content: editedContent })
+        body: JSON.stringify({ content: editedContent }),
       });
 
       if (!res.ok) throw new Error("Fehler beim Bearbeiten des Kommentars.");
 
-      setComments(prev =>
-        prev.map(c =>
+      setComments((prev) =>
+        prev.map((c) =>
           c.id === commentId ? { ...c, content: editedContent, updated_at: new Date().toISOString() } : c
         )
       );
@@ -152,140 +166,180 @@ function RecipeDetails() {
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  if (loading || !recipe) {
+    return <ProfileSpinnerOrError loading={loading} error={error} />;
+  }
+
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   return (
-    <ProfileSpinnerOrError loading={loading} error={error}>
-      <Container style={{ maxWidth: "800px", marginTop: "80px" }}>
-        <h1 className="mb-3">{recipe.title}</h1>
+    <Container className="recipe-container">
+      {/* Carousel + Edit Button */}
+      <div className="recipe-carousel-wrapper">
+        <Carousel className="recipe-carousel" interval={null}>
+          {(recipe.images.length > 0 ? recipe.images : ["default-recipe.png"]).map((img, index) => (
+            <Carousel.Item key={index}>
+              <img
+                src={`http://backend-api.com:3001/uploads/${img}`}
+                alt={`Bild ${index + 1}`}
+                className="recipe-image"
+              />
+            </Carousel.Item>
+          ))}
+        </Carousel>
 
         {currentUser?.id === recipe.user_id && (
-          <div className="d-flex gap-2 mb-3">
-            <Button variant="outline-secondary" onClick={() => navigate(`/edit-recipe/${recipe.id}`)}>
-              Bearbeiten
-            </Button>
+          <Button
+            className="edit-btn"
+            variant="outline-light"
+            onClick={() => navigate(`/edit-recipe/${recipe.id}`)}
+          >
+            <FiEdit2 />
+          </Button>
+        )}
+      </div>
+
+      <div className="recipe-inner">
+        <h1 className="recipe-title">{recipe.title}</h1>
+
+        <div className="recipe-top-section">
+          <div className="recipe-ingredients">
+            <h5>Zutaten:</h5>
+            <p style={{ whiteSpace: "pre-line" }}>{recipe.ingredients}</p>
           </div>
-        )}
+        </div>
 
-        {Array.isArray(recipe.images) && recipe.images.length > 0 ? (
-          <Carousel interval={null} indicators={recipe.images.length > 1} className="mb-4">
-            {recipe.images.map((img, idx) => (
-              <Carousel.Item key={idx}>
-                <img
-                  src={`http://backend-api.com:3001/uploads/${img}`}
-                  alt={`Bild ${idx + 1}`}
-                  style={{
-                    height: "500px",
-                    objectFit: "cover",
-                    borderRadius: "8px"
-                  }}
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
-        ) : (
-          <img
-            src={`http://backend-api.com:3001/uploads/default-recipe.png`}
-            alt="default-pic"
-            style={{
-              height: "500px",
-              objectFit: "cover",
-              borderRadius: "8px"
-            }}
-          />
-        )}
+        <div className="recipe-steps-section">
+          <h5>Zubereitung:</h5>
+          <p style={{ whiteSpace: "pre-line" }}>{recipe.steps}</p>
+        </div>
 
-        <h5 className="mt-4">Zutaten:</h5>
-        <p style={{ whiteSpace: "pre-line" }}>{recipe.ingredients}</p>
-
-        <h5 className="mt-4">Zubereitung:</h5>
-        <p style={{ whiteSpace: "pre-line" }}>{recipe.steps}</p>
-
-        <small className="text-muted d-block mt-4">
+        <div className="recipe-date">
           Erstellt am: {new Date(recipe.created_at).toLocaleDateString("de-DE")}
-        </small>
+        </div>
 
-        <hr className="my-4" />
-        <h4>Kommentare</h4>
+        <div className="comment-section mt-4">
+          <h4>Kommentare</h4>
 
-        {currentUser && (
-          <div className="mb-3">
-            <textarea
-              className="form-control mb-2"
-              rows={3}
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Was möchtest du sagen?"
-            />
-            {commentError && <div className="text-danger">{commentError}</div>}
-            <Button onClick={handleSubmitComment}>Kommentieren</Button>
-          </div>
-        )}
+          {currentUser && (
+            <div className="comment-form mt-3">
+              <textarea
+                className="form-control mb-2"
+                style={{ marginTop: "2rem" }}
+                rows={3}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Was möchtest du sagen?"
+              />
+              {commentError && <div className="text-danger">{commentError}</div>}
+              <Button
+                onClick={handleSubmitComment}
+                className="custom-nav-link d-flex align-items-center gap-2 mt-2"
+                variant="outline-light"
+              >
+                <FiMessageCircle /> Kommentieren
+              </Button>
+            </div>
+          )}
 
-        {comments.length === 0 ? (
-          <p className="text-muted">Noch keine Kommentare.</p>
-        ) : (
-          comments.map(comment => (
-            <div key={comment.id} className="border rounded p-2 mb-3">
-              <div className="d-flex align-items-center mb-2">
-                <img
-                  src={`http://backend-api.com:3001/profile_pics/${comment.image_url || "default-profile.png"}`}
-                  alt="Profil"
-                  className="rounded-circle me-2"
-                  style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                />
-                <strong>{comment.firstName} {comment.lastName}</strong>
-                <span className="ms-auto text-muted" style={{ fontSize: "0.8rem" }}>
-                  {format(comment.created_at, "de")}
-                  {comment.updated_at && comment.updated_at !== comment.created_at && (
-                    <span className="text-muted ms-2" style={{ fontSize: "0.75rem" }}>
-                      (Bearbeitet)
+          {comments.length === 0 ? (
+            <p className="text-muted mt-3">Noch keine Kommentare.</p>
+          ) : (
+            comments.map((comment) => (
+              <div key={comment.id} className="comment-box">
+                <div className="d-flex align-items-start justify-content-between mb-2">
+                  <div className="d-flex align-items-center">
+                    <img
+                      src={`http://backend-api.com:3001/profile_pics/${comment.image_url || "default-profile.png"}`}
+                      alt="Profil"
+                      className="comment-avatar me-2"
+                    />
+                    <strong>{comment.firstName} {comment.lastName}</strong>
+                  </div>
+
+                  <div className="comment-side ms-auto text-end">
+                    <span className="comment-time d-block">
+                      {format(comment.created_at, "de")}
+                      {comment.updated_at && comment.updated_at !== comment.created_at && (
+                        <span className="comment-edited ms-2">(Bearbeitet)</span>
+                      )}
                     </span>
-                  )}
-                  {currentUser?.id === comment.user_id && (
-                    <>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-warning ms-2 p-0"
-                        onClick={() => {
-                          setEditingCommentId(comment.id);
-                          setEditedContent(comment.content);
-                        }}
-                      >
-                        ✏️
-                      </Button>
 
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-danger ms-2 p-0"
-                        onClick={() => handleDeleteComment(comment.id)}
-                      >
-                        🗑️
-                      </Button>
-                    </>
-                  )}
-                </span>
-              </div>
-              {editingCommentId === comment.id ? (
-                <div>
-                  <textarea
-                    className="form-control mb-2"
-                    value={editedContent}
-                    onChange={(e) => setEditedContent(e.target.value)}
-                  />
-                  <div className="d-flex gap-2">
-                    <Button variant="success" size="sm" onClick={() => handleUpdateComment(comment.id)}>Speichern</Button>
-                    <Button variant="secondary" size="sm" onClick={() => setEditingCommentId(null)}>Abbrechen</Button>
+                    {currentUser?.id === comment.user_id && (
+                      <div className="comment-actions mt-1 d-flex justify-content-end gap-2">
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="text-warning p-0"
+                          onClick={() => {
+                            setEditingCommentId(comment.id);
+                            setEditedContent(comment.content);
+                          }}
+                        >
+                          <FiEdit2 />
+                        </Button>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="text-danger p-0"
+                          onClick={() => {
+                            setSelectedCommentId(comment.id);
+                            setShowDeleteModal(true);
+                          }}
+                        >
+                          <FiTrash2 />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ) : (
-                <div>{comment.content}</div>
-              )}
-            </div>
-          ))
-        )}
-      </Container>
-    </ProfileSpinnerOrError>
+
+                {editingCommentId === comment.id ? (
+                  <div>
+                    <textarea
+                      className="form-control mb-2"
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                    />
+                    <div className="d-flex gap-2">
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={() => handleUpdateComment(comment.id)}
+                      >
+                        Speichern
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setEditingCommentId(null)}
+                      >
+                        Abbrechen
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>{comment.content}</div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <ConfirmModal
+        show={showDeleteModal}
+        onHide={() => {
+          setShowDeleteModal(false);
+          setSelectedCommentId(null);
+        }}
+        title="Kommentar löschen"
+        body="Bist du sicher, dass du diesen Kommentar löschen möchtest?"
+        onConfirm={handleDeleteConfirmed}
+        confirmText="Löschen"
+        loading={deleteLoading}
+      />
+    </Container>
   );
 }
 

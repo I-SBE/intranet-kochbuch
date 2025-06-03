@@ -15,13 +15,13 @@ function RecipeList({ recipes, recipeError, onRefresh }) {
   }
 
   if (!Array.isArray(recipes) || recipes.length === 0) {
-    return <p>Du hast noch keine Rezepte veröffentlicht.</p>;
+    return <p className="no-results">Du hast noch keine Rezepte!</p>;
   }
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   return (
-    <div className="profile-recipes-grid">
+    <div className="card-grid">
       {recipes.map((recipe) => (
         <RecipeCard
           key={recipe.id}

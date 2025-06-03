@@ -120,6 +120,13 @@ function EditRecipe() {
           <Button
             variant="danger"
             onClick={() => setShowDeleteModal(true)}
+            className="custom-nav-link"
+            style={{ 
+              alignContent: "center",
+              marginLeft:"21rem",
+              marginTop:"5rem",
+              background: "#ff0000"
+            }}
           >
             Rezept löschen
           </Button>

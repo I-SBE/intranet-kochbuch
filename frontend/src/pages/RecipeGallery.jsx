@@ -70,7 +70,7 @@ function RecipeGallery() {
             <h1 className="gallery-title">Rezept-Galerie</h1>
             <hr className="title-divider" />
 
-            <div className="gallery-recipes-grid">
+            <div className="card-grid">
               {recipes.length > 0 ? (
                 recipes.map(recipe => (
                   <RecipeCard key={recipe.id} recipe={recipe} />
