@@ -7,7 +7,7 @@ import "../../styles/RecipeCard.css";
 
 //--------------------------------------------------------------------------
 
-function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, favorites = [], onFavoriteAdded }) {
+function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, favorites = [], onFavoriteAdded, onFavoriteDeleted }) {
 
   const navigate = useNavigate();
   const isPublic = recipe.is_public === true || recipe.is_public === 1 || recipe.is_public === "true";
@@ -42,8 +42,11 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
         throw new Error(data.message || "Fehler beim Favoriten-Update.");
       }
 
-      if (onFavoriteAdded) onFavoriteAdded(recipe);
-      
+      if (isFavorite) {
+        if (onFavoriteDeleted) onFavoriteDeleted(recipe);
+      } else {
+        if (onFavoriteAdded) onFavoriteAdded(recipe);
+      }
     } catch (err) {
       alert("Fehler: " + err.message);
       console.log(err.message);

@@ -113,6 +113,10 @@ function Profile() {
     fetchFavorites();
   };
 
+  const handleFavoriteDeleted = (recipe) => {
+    fetchFavorites();
+  };
+
 
   return (
     <ProfileSpinnerOrError loading={loading} error={error}>
@@ -147,6 +151,7 @@ function Profile() {
           onRefresh={fetchUserRecipes}
           favorites={favorites}
           onFavoriteAdded={handleFavoriteAdded}
+          onFavoriteDeleted={handleFavoriteDeleted}
         />
 
         <hr className="profile-divider" />
@@ -161,6 +166,7 @@ function Profile() {
           recipeError={favoritesError}
           favorites={favorites}
           onFavoriteAdded={handleFavoriteAdded}
+          onFavoriteDeleted={handleFavoriteDeleted}
         />
       </div>
     </ProfileSpinnerOrError>
