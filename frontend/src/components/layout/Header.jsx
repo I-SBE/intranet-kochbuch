@@ -35,7 +35,7 @@ function Header() {
           <Navbar.Toggle aria-controls="navbar-nav" />
           <Navbar.Collapse id="navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/" className="custom-nav-link">Home</Nav.Link>
+              <Nav.Link as={Link} to="/" className="custom-nav-link">Startseite</Nav.Link>
               <Nav.Link as={Link} to="/gallery" className="custom-nav-link">Rezept-Galerie</Nav.Link>
               <Nav.Link as={Link} to="/about" className="custom-nav-link">Über-uns</Nav.Link>
               <Nav.Link as={Link} to="/kontakt" className="custom-nav-link">Kontakt</Nav.Link>
@@ -44,13 +44,13 @@ function Header() {
             <Nav className="ms-auto align-items-center">
               {isLoggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/profile" className="custom-nav-link  with-border"><FiUser className="me-1" />Profile</Nav.Link>
-                  <Nav.Link onClick={handleLogout} className="custom-nav-link"style={{backgroundColor: "#7f0000"}}><FiLogOut className="me-1" />Logout</Nav.Link>
+                  <Nav.Link as={Link} to="/profile" className="custom-nav-link  with-border"><FiUser className="me-1" />Profil</Nav.Link>
+                  <Nav.Link onClick={handleLogout} className="custom-nav-link"style={{backgroundColor: "#7f0000"}}><FiLogOut className="me-1" />Abmelden</Nav.Link>
                 </>
               ) : (
                 <>
-                  <Nav.Link as={Link} to="/login" className="custom-nav-link" style={{backgroundColor: "#007f00"}}> <FiLogIn className="me-1" />Login</Nav.Link>
-                  <Nav.Link as={Link} to="/register" className="custom-nav-link with-border"><FiUserPlus className="me-1" />Register</Nav.Link>
+                  <Nav.Link as={Link} to="/login" className="custom-nav-link" style={{backgroundColor: "#007f00"}}> <FiLogIn className="me-1" />Anmelden</Nav.Link>
+                  <Nav.Link as={Link} to="/register" className="custom-nav-link with-border"><FiUserPlus className="me-1" />Registrieren</Nav.Link>
                 </>
               )}
             </Nav>

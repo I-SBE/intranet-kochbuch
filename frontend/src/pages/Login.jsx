@@ -109,7 +109,7 @@ function Login({ onLogin }) {
         </Form>
 
         <div className="mt-3 text-center d-flex justify-content-center align-items-center gap-2 flex-wrap">
-          <span>Noch kein Konto?</span>
+          <span>Du hast noch kein Konto?</span>
           <Button 
             variant="outline-light"
             type="submit"

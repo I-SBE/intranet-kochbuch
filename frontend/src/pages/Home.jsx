@@ -41,16 +41,16 @@ function Home() {
     <ProfileSpinnerOrError loading={loading} error={error}>
       <div className="home-page">
         <div className="hero-section text-center text-white d-flex flex-column justify-content-center align-items-center">
-          <h1 className="mt-3 display-5">Choose From Thousands of Recipes</h1>
+          <h1 className="mt-3 display-5">Wähle aus tausenden Rezepten</h1>
           <input
             type="text"
-            placeholder="Search Recipes"
+            placeholder="Rezepte suchen"
             className="form-control search-box mt-3 mx-auto"
             style={{ maxWidth: "400px" }}
           />
           <div className="mt-3">
             {isLoggedIn ? (
-              <p className="text-light">Welcome, {user?.firstName || "Guest"}!</p>
+              <p className="text-light">Willkommen, {user?.firstName || "Gast"}!</p>
             ) : (
               <>
                 <Button
@@ -58,14 +58,14 @@ function Home() {
                   className="custom-nav-link"
                   onClick={() => navigate("/register")}
                 >
-                  <FiUserPlus className="me-1" /> Sign Up
+                  <FiUserPlus className="me-1" /> Jetzt registrieren
                 </Button>
                 <Button
                   variant="outline-light"
                   className="custom-nav-link"
                   onClick={() => navigate("/login")}
                 >
-                  <FiLogIn className="me-1" /> Login
+                  <FiLogIn className="me-1" /> Anmelden
                 </Button>
               </>
             )}
