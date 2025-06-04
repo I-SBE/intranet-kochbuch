@@ -20,6 +20,7 @@ function Home() {
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const { favorites, handleFavoriteAdded, handleFavoriteDeleted } = useFavorites();
+  const [searchTerm, setSearchTerm] = useState("");
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -44,6 +45,13 @@ function Home() {
           <h1 className="mt-3 display-5">Wähle aus tausenden Rezepten</h1>
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                navigate(`/gallery?search=${encodeURIComponent(searchTerm)}`);
+              }
+            }}
             placeholder="Rezepte suchen"
             className="form-control search-box mt-3 mx-auto"
             style={{ maxWidth: "400px" }}

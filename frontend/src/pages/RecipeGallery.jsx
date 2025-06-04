@@ -38,7 +38,6 @@ function RecipeGallery() {
     const query = new URLSearchParams(filters).toString();
     const url = `/api/recipes${query ? `?${query}` : ""}`;
 
-    setLoading(true);
     fetch(url)
       .then(res => {
         if (!res.ok) throw new Error("Fehler beim Abrufen der Rezepte");
