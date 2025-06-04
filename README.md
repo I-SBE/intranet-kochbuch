@@ -1,6 +1,17 @@
 # Intranet Cookbook for Trainees
 
-A web-based intranet application developed as part of the practical training in **Dynamic Web Development** (FPAdW – FI37). The platform enables current and future trainees to register, share, and explore favorite recipes within the organization.
+A web-based intranet application (Single Page Application) developed as part of the practical training in **Dynamic Web Development** (FPAdW – FI37). The platform enables current and future trainees to register, share, and explore favorite recipes within the organization.
+
+---
+
+## Contents
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Project Structure](#project-structure)
+- [Security Requirements](#security-requirements)
+- [Installation Guide](#installation-guide)
+- [Documentation (JSDoc)](#documentation-jsdoc)
+- [License](#license)
 
 ---
 
@@ -11,6 +22,8 @@ A web-based intranet application developed as part of the practical training in 
 - Each recipe includes: title, ingredients, preparation steps, and image
 - Publicly share published recipes
 - View recipe details
+- Recipes are stored in a MariaDB database with image paths and user references
+- JWT-based authentication & protected routes
 
 ### Optional Features
 
@@ -122,6 +135,15 @@ Make sure the backend is running and accessible via:
 ```
 http://localhost:3001
 ```
+
+Make sure to run both frontend and backend in **parallel** during development.
+
+### Test Accounts
+
+You can use the following test account to log in:
+
+- Email: test@example.com  
+- Password: Test123!
 
 ---
 
