@@ -1,3 +1,17 @@
+/**
+ * @file recipes.js
+ * @description API-Endpunkte für das Erstellen, Abrufen, Bearbeiten und Löschen von Rezepten, inklusive Favoriten- und Bildverwaltung.
+ * 
+ * @module routes/recipes
+ * @requires express
+ * @requires multer
+ * @requires dotenv
+ * @requires ../middleware/auth
+ * @requires ../db/db
+ */
+
+//=================================================
+
 import express from 'express';
 import {pool} from '../db/db.js';
 
@@ -31,6 +45,21 @@ const upload = multer({
 const tempUpload = multer({ dest: 'uploads/' });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Ruft alle öffentlichen Rezepte ab, optional gefiltert nach Suchbegriff, Kategorie, Dauer oder Schwierigkeitsgrad.
+ * 
+ * @function getPublicRecipes
+ * @route GET /
+ * @query {string} search - Suchbegriff für Titel, Zutaten oder Schritte
+ * @query {string} category - Filter nach Kategorie
+ * @query {string} duration - Filter nach Zubereitungszeit
+ * @query {string} difficulty - Filter nach Schwierigkeitsgrad
+ * @returns {Array<Object>} 200 - Liste der Rezepte mit Bildern
+ * @returns {Object} 500 - Fehler beim Abrufen
+ */
+
+//=================================================
 
 router.get('/', async (req, res) => {
   const { search, category, duration, difficulty } = req.query;
@@ -84,6 +113,17 @@ router.get('/', async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Ruft alle Favoriten des angemeldeten Nutzers ab.
+ * 
+ * @function getFavorites
+ * @route GET /favorites
+ * @returns {Object} 200 - Objekt mit Liste der Favoriten
+ * @returns {Object} 500 - Fehler beim Laden der Favoriten
+ */
+
+//=================================================
+
 router.get('/favorites', isAuthenticated, async (req, res) => {
   const userId = req.user.id;
 
@@ -111,6 +151,19 @@ router.get('/favorites', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Fügt ein Rezept zur Favoritenliste des aktuellen Nutzers hinzu.
+ * 
+ * @function addFavorite
+ * @route POST /favorites/:recipeId
+ * @param {string} recipeId.path - ID des Rezepts
+ * @returns {Object} 201 - Erfolgsmeldung
+ * @returns {Object} 409 - Rezept ist bereits in Favoriten
+ * @returns {Object} 500 - Fehler beim Hinzufügen
+ */
+
+//=================================================
+
 router.post('/favorites/:recipeId', isAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const recipeId = req.params.recipeId;
@@ -132,6 +185,18 @@ router.post('/favorites/:recipeId', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Entfernt ein Rezept aus den Favoriten des aktuellen Nutzers.
+ * 
+ * @function removeFavorite
+ * @route DELETE /favorites/:recipeId
+ * @param {string} recipeId.path - ID des Rezepts
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 500 - Fehler beim Entfernen
+ */
+
+//=================================================
+
 router.delete('/favorites/:recipeId', isAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const recipeId = req.params.recipeId;
@@ -148,6 +213,26 @@ router.delete('/favorites/:recipeId', isAuthenticated, async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Erstellt ein neues Rezept mit optionalem Upload mehrerer Bilder.
+ * 
+ * @function createRecipe
+ * @route POST /
+ * @middleware isAuthenticated
+ * @body {string} title.required - Titel des Rezepts
+ * @body {string} ingredients.required - Zutaten
+ * @body {string} steps.required - Zubereitungsschritte
+ * @body {boolean} is_public - Öffentlich oder privat
+ * @body {string} category - Kategorie des Rezepts
+ * @body {number} duration - Zubereitungszeit in Minuten
+ * @body {string} difficulty - Schwierigkeitsgrad
+ * @returns {Object} 201 - Erfolgsmeldung und Rezept-ID
+ * @returns {Object} 400 - Fehlende Pflichtfelder
+ * @returns {Object} 500 - Fehler beim Speichern
+ */
+
+//=================================================
 
 router.post('/', isAuthenticated, tempUpload.array('images', 10), async (req, res) => {
   const { title, ingredients, steps, is_public, category, duration, difficulty } = req.body;
@@ -192,6 +277,19 @@ router.post('/', isAuthenticated, tempUpload.array('images', 10), async (req, re
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Fügt zusätzliche Bilder zu einem bestehenden Rezept hinzu.
+ * 
+ * @function addRecipeImages
+ * @route POST /:id/images
+ * @param {string} id.path - ID des Rezepts
+ * @returns {Object} 200 - Erfolgsmeldung mit Dateinamen
+ * @returns {Object} 403 - Kein Zugriff auf Rezept
+ * @returns {Object} 500 - Fehler beim Hochladen
+ */
+
+//=================================================
 
 router.post('/:id/images', isAuthenticated, tempUpload.array('images', 10), async (req, res) => {
   const { id } = req.params;
@@ -254,6 +352,21 @@ router.post('/:id/images', isAuthenticated, tempUpload.array('images', 10), asyn
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Ersetzt ein vorhandenes Bild eines Rezepts durch ein neues.
+ * 
+ * @function replaceRecipeImage
+ * @route PUT /:id/images/:oldImageName
+ * @param {string} id.path - ID des Rezepts
+ * @param {string} oldImageName.path - Name des zu ersetzenden Bildes
+ * @returns {Object} 200 - Erfolgsmeldung mit neuem Bildnamen
+ * @returns {Object} 403 - Kein Zugriff
+ * @returns {Object} 404 - Bild nicht gefunden
+ * @returns {Object} 500 - Fehler beim Ersetzen
+ */
+
+//=================================================
 
 router.put('/:id/images/:oldImageName', isAuthenticated, upload.single('newImage'), async (req, res) => {
   const { id, oldImageName } = req.params;
@@ -331,6 +444,21 @@ router.put('/:id/images/:oldImageName', isAuthenticated, upload.single('newImage
 
 //--------------------------------------------------------------------------
 
+/**
+ * Löscht ein Bild eines Rezepts.
+ * 
+ * @function deleteRecipeImage
+ * @route DELETE /:id/images/:imageName
+ * @param {string} id.path - ID des Rezepts
+ * @param {string} imageName.path - Name des zu löschenden Bildes
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 403 - Kein Zugriff
+ * @returns {Object} 404 - Bild nicht gefunden
+ * @returns {Object} 500 - Fehler beim Löschen
+ */
+
+//=================================================
+
 router.delete('/:id/images/:imageName', isAuthenticated, async (req, res) => {
   const { id, imageName } = req.params;
   const user_id = req.user.id;
@@ -375,6 +503,19 @@ router.delete('/:id/images/:imageName', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Ruft ein einzelnes Rezept inklusive Bilder ab.
+ * 
+ * @function getSingleRecipe
+ * @route GET /:id
+ * @param {string} id.path - ID des Rezepts
+ * @returns {Object} 200 - Das Rezept mit Bildern
+ * @returns {Object} 404 - Rezept nicht gefunden
+ * @returns {Object} 500 - Fehler beim Abrufen
+ */
+
+//=================================================
+
 router.get('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
 
@@ -402,6 +543,26 @@ router.get('/:id', isAuthenticated, async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Aktualisiert ein Rezept, sofern der Nutzer Eigentümer ist.
+ * 
+ * @function updateRecipe
+ * @route PUT /:id
+ * @param {string} id.path - ID des Rezepts
+ * @body {string} title.required - Neuer Titel
+ * @body {string} ingredients.required - Neue Zutaten
+ * @body {string} steps.required - Neue Schritte
+ * @body {boolean} is_public - Sichtbarkeit
+ * @body {string} category - Neue Kategorie
+ * @body {number} duration - Neue Dauer
+ * @body {string} difficulty - Neuer Schwierigkeitsgrad
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 403 - Kein Zugriff
+ * @returns {Object} 500 - Fehler beim Aktualisieren
+ */
+
+//=================================================
 
 router.put('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
@@ -435,6 +596,19 @@ router.put('/:id', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Löscht ein Rezept sowie alle zugehörigen Bilder.
+ * 
+ * @function deleteRecipe
+ * @route DELETE /:id
+ * @param {string} id.path - ID des Rezepts
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 403 - Kein Zugriff
+ * @returns {Object} 500 - Fehler beim Löschen
+ */
+
+//=================================================
+
 router.delete('/:id', isAuthenticated, async (req, res) => {
   const { id } = req.params;
   const user_id = req.user.id;
@@ -458,6 +632,16 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Fehlerbehandlung für ungültige Bildformate.
+ * 
+ * @function imageFormatErrorHandler
+ * @middleware
+ * @returns {Object} 400 - Nur Bilder erlaubt
+ */
+
+//=================================================
 
 router.use((err, req, res, next) => {
   if (err.message === "Nur Bilddateien erlaubt.") {

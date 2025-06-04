@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
+    "docs": "jsdoc -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,6 +23,10 @@
     "nodemailer": "^7.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "docdash": "^2.0.2",
+    "jsdoc": "^4.0.4",
+    "minami": "^1.2.3",
+    "nodemon": "^3.1.10",
+    "taffydb": "^2.7.3"
   }
 }

@@ -1,3 +1,30 @@
+# Node.js dependencies
 node_modules/
-.env
+
+# Environment variables
+**/.env
+
+# Uploaded files (should not be versioned)
 backend/uploads/
+backend/profile_pics/
+
+# Auto-generated JSDoc output
+backend/docs-backend/
+
+# Logs and system files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Frontend build artifacts (optional if you later build frontend)
+frontend/dist/

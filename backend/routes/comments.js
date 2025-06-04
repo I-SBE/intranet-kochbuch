@@ -1,3 +1,12 @@
+/**
+ * @file comments.js
+ * @description API-Endpunkte zur Verwaltung von Kommentaren zu Rezepten.
+ * 
+ * @module routes/comments
+ */
+
+//=================================================
+
 import express from 'express';
 import { pool } from '../db/db.js';
 import { isAuthenticated } from '../middleware/auth.js';
@@ -7,6 +16,19 @@ import { isAuthenticated } from '../middleware/auth.js';
 const router = express.Router();
 
 //--------------------------------------------------------------------------
+
+/**
+ * Holt alle Kommentare für ein bestimmtes Rezept.
+ * 
+ * @function getComments
+ * @route GET /:recipeId
+ * @group Kommentare - Operationen auf Kommentaren
+ * @param {string} recipeId.path - ID des Rezepts
+ * @returns {Array<Object>} 200 - Liste von Kommentaren
+ * @returns {Object} 500 - Fehler beim Abrufen
+ */
+
+//=================================================
 
 router.get('/:recipeId', async (req, res) => {
   const { recipeId } = req.params;
@@ -30,6 +52,20 @@ router.get('/:recipeId', async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Erstellt einen neuen Kommentar zu einem Rezept.
+ * 
+ * @function postComment
+ * @route POST /:recipeId
+ * @param {string} recipeId.path - ID des Rezepts
+ * @param {string} content.body.required - Kommentarinhalt
+ * @returns {Object} 201 - Der neu erstellte Kommentar
+ * @returns {Object} 400 - Kommentarinhalt fehlt
+ * @returns {Object} 500 - Fehler beim Speichern
+ */
+
+//=================================================
 
 router.post('/:recipeId', isAuthenticated, async (req, res) => {
   const { recipeId } = req.params;
@@ -69,6 +105,21 @@ router.post('/:recipeId', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Aktualisiert einen bestehenden Kommentar, sofern der Nutzer der Eigentümer ist.
+ * 
+ * @function updateComment
+ * @route PUT /:commentId
+ * @param {string} commentId.path - ID des Kommentars
+ * @param {string} content.body.required - Neuer Kommentarinhalt
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 400 - Kommentarinhalt fehlt
+ * @returns {Object} 403 - Kein Zugriff erlaubt
+ * @returns {Object} 500 - Fehler beim Aktualisieren
+ */
+
+//=================================================
+
 router.put('/:commentId', isAuthenticated, async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
@@ -101,6 +152,19 @@ router.put('/:commentId', isAuthenticated, async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Löscht einen Kommentar, sofern der Nutzer der Eigentümer ist.
+ * 
+ * @function deleteComment
+ * @route DELETE /:commentId
+ * @param {string} commentId.path - ID des Kommentars
+ * @returns {Object} 200 - Erfolgsmeldung
+ * @returns {Object} 403 - Kein Zugriff erlaubt
+ * @returns {Object} 500 - Fehler beim Löschen
+ */
+
+//=================================================
 
 router.delete('/:commentId', isAuthenticated, async (req, res) => {
   const { commentId } = req.params;

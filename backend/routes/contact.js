@@ -1,3 +1,14 @@
+/**
+ * @file contact.js
+ * @description API-Endpunkt zum Versenden von Kontaktanfragen per E-Mail.
+ * 
+ * @module routes/contact
+ * @requires nodemailer
+ * @requires dotenv
+ */
+
+//=================================================
+
 import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -8,6 +19,21 @@ dotenv.config();
 const router = express.Router();
 
 //--------------------------------------------------------------------------
+
+/**
+ * Versendet eine Kontaktanfrage per E-Mail an den Administrator.
+ * 
+ * @function sendContactForm
+ * @route POST /
+ * @param {string} name.body.required - Name des Absenders
+ * @param {string} email.body.required - E-Mail-Adresse des Absenders
+ * @param {string} message.body.required - Nachricht des Absenders
+ * @returns {Object} 200 - Erfolgreiche Bestätigung
+ * @returns {Object} 400 - Validierungsfehler (fehlende Felder)
+ * @returns {Object} 500 - Fehler beim Senden der Nachricht
+ */
+
+//=================================================
 
 router.post("/", async (req, res) => {
   const { name, email, message } = req.body;

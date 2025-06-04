@@ -1,3 +1,21 @@
+/**
+ * @file index.js
+ * @description Hauptentrypoint der Webanwendung. Initialisiert Express, lädt Umgebungsvariablen,
+ * bindet Routen ein und startet den HTTP-Server.
+ * 
+ * @requires express
+ * @requires cors
+ * @requires dotenv
+ * @requires node:path
+ * @requires node:url
+ * @requires ./routes/recipes
+ * @requires ./routes/users
+ * @requires ./routes/comments
+ * @requires ./routes/contact
+ */
+
+//=================================================
+
 import express from "express";
 import cors from "cors";
 import dotenv from 'dotenv';
@@ -43,6 +61,16 @@ app.use((req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Startet den HTTP-Server und hört auf dem konfigurierten Port.
+ * 
+ * @function
+ * @returns {void}
+ */
+
+
+//=================================================
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

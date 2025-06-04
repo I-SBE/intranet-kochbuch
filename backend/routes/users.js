@@ -1,3 +1,19 @@
+/**
+ * @file auth.js
+ * @description API-Endpunkte für die Registrierung, Authentifizierung und Verwaltung von Benutzerprofilen.
+ * 
+ * @module routes/auth
+ * @requires express
+ * @requires bcrypt
+ * @requires jsonwebtoken
+ * @requires multer
+ * @requires dotenv
+ * @requires ../db/db
+ * @requires ../middleware/auth
+ */
+
+//=================================================
+
 import express from 'express';
 import bcrypt from 'bcrypt';
 import { pool } from '../db/db.js';
@@ -11,6 +27,24 @@ const router = express.Router();
 const profile_pics = multer({ dest: 'profile_pics/' });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Registriert einen neuen Benutzer inkl. optionalem Profilbild.
+ * 
+ * @function registerUser
+ * @route POST /register
+ * @body {string} firstName.required - Vorname
+ * @body {string} lastName.required - Nachname
+ * @body {string} email.required - E-Mail-Adresse
+ * @body {string} password.required - Passwort
+ * @body {File} image - Optionales Profilbild
+ * @returns {Object} 201 - Registrierung erfolgreich
+ * @returns {Object} 400 - Fehlende Pflichtfelder
+ * @returns {Object} 409 - E-Mail bereits registriert
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
 
 router.post('/register', profile_pics.single("image"), async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -41,6 +75,21 @@ router.post('/register', profile_pics.single("image"), async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Loggt den Benutzer ein und gibt ein JWT zurück.
+ * 
+ * @function loginUser
+ * @route POST /login
+ * @body {string} email.required - E-Mail-Adresse
+ * @body {string} password.required - Passwort
+ * @returns {Object} 200 - Token und Benutzerdaten
+ * @returns {Object} 400 - Fehlende Felder
+ * @returns {Object} 401 - Ungültige Anmeldedaten
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -92,11 +141,33 @@ router.post('/login', async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Meldet den Benutzer ab (Client-seitig relevant).
+ * 
+ * @function logoutUser
+ * @route GET /logout
+ * @returns {Object} 200 - Logout erfolgreich
+ */
+
+//=================================================
+
 router.get('/logout', (req, res) => {
   res.json({ message: 'Logout erfolgreich.' });
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Ruft die Daten des aktuell angemeldeten Benutzers ab.
+ * 
+ * @function getCurrentUser
+ * @route GET /me
+ * @returns {Object} 200 - Benutzerdaten
+ * @returns {Object} 404 - Benutzer nicht gefunden
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
 
 router.get('/me', isAuthenticated, async (req, res) => {
   try {
@@ -113,8 +184,18 @@ router.get('/me', isAuthenticated, async (req, res) => {
   }
 });
 
-
 //--------------------------------------------------------------------------
+
+/**
+ * Ruft alle Rezepte des aktuell angemeldeten Benutzers ab.
+ * 
+ * @function getMyRecipes
+ * @route GET /my-recipes
+ * @returns {Object} 200 - Liste eigener Rezepte inkl. Bilder
+ * @returns {Object} 500 - Fehler beim Laden
+ */
+
+//=================================================
 
 router.get('/my-recipes', isAuthenticated, async (req, res) => {
   try {
@@ -143,6 +224,21 @@ router.get('/my-recipes', isAuthenticated, async (req, res) => {
 
 //--------------------------------------------------------------------------
 
+/**
+ * Aktualisiert das Benutzerprofil (Name, E-Mail, Bild).
+ * 
+ * @function updateUserProfile
+ * @route PUT /update-profile
+ * @body {string} firstName - Neuer Vorname
+ * @body {string} lastName - Neuer Nachname
+ * @body {string} email - Neue E-Mail-Adresse
+ * @body {File} image - Neues Profilbild (optional)
+ * @returns {Object} 200 - Profil aktualisiert
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
+
 router.put("/update-profile", isAuthenticated, profile_pics.single("image"), async (req, res) => {
   const { firstName, lastName, email } = req.body;
   const image_url = req.file ? req.file.filename : req.body.image_url;
@@ -161,6 +257,22 @@ router.put("/update-profile", isAuthenticated, profile_pics.single("image"), asy
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Ändert das Passwort des Benutzers.
+ * 
+ * @function changeUserPassword
+ * @route PUT /change-password
+ * @body {string} currentPassword.required - Aktuelles Passwort
+ * @body {string} newPassword.required - Neues Passwort (min. 8 Zeichen)
+ * @returns {Object} 200 - Passwort geändert
+ * @returns {Object} 400 - Eingabefehler
+ * @returns {Object} 401 - Falsches aktuelles Passwort
+ * @returns {Object} 404 - Benutzer nicht gefunden
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
 
 router.put("/change-password", isAuthenticated, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
@@ -198,6 +310,17 @@ router.put("/change-password", isAuthenticated, async (req, res) => {
 });
 
 //--------------------------------------------------------------------------
+
+/**
+ * Löscht das Benutzerkonto inklusive aller zugehörigen Daten.
+ * 
+ * @function deleteAccount
+ * @route DELETE /delete-account
+ * @returns {Object} 200 - Konto gelöscht
+ * @returns {Object} 500 - Serverfehler
+ */
+
+//=================================================
 
 router.delete("/delete-account", isAuthenticated, async (req, res) => {
   const userId = req.user.id;

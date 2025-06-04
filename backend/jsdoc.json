@@ -1,0 +1,18 @@
+{
+  "source": {
+    "include": ["routes", "db", "middleware", "index.js"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_(.*)|node_modules|uploads|profile_pics|public"
+  },
+  "opts": {
+    "destination": "./docs-backend",
+    "recurse": true,
+    "verbose": true,
+    "template": "node_modules/docdash"
+  },
+  "plugins": [],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
+  }
+}
