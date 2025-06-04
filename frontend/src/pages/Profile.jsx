@@ -110,6 +110,7 @@ function Profile() {
           favorites={favorites}
           onFavoriteAdded={handleFavoriteAdded}
           onFavoriteDeleted={handleFavoriteDeleted}
+          currentUser={user}
         />
 
         <hr className="profile-divider" />
@@ -125,6 +126,7 @@ function Profile() {
           favorites={favorites}
           onFavoriteAdded={handleFavoriteAdded}
           onFavoriteDeleted={handleFavoriteDeleted}
+          currentUser={user}
         />
       </div>
     </ProfileSpinnerOrError>
