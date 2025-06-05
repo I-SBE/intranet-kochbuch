@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 //--------------------------------------------------------
 
@@ -9,13 +10,19 @@ const FavoritesContext = createContext();
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   const fetchFavorites = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setFavorites([]);
+      setLoading(false);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://backend-api.com:3001/api/recipes/favorites", {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/favorites`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -42,8 +49,12 @@ export const FavoritesProvider = ({ children }) => {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   useEffect(() => {
-    fetchFavorites();
-  }, []);
+    if (isLoggedIn) fetchFavorites();
+    else {
+      setFavorites([]);
+      setLoading(false);
+    }
+  }, [isLoggedIn]);
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
