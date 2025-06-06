@@ -116,6 +116,8 @@ MAIL_USER=your-app-email@gmail.com
 
 Import the file `db/fi37_sbeih_fpadw.sql` into your MariaDB server.
 
+---
+
 ### Frontend Setup
 
 ```bash
@@ -124,26 +126,41 @@ npm install
 npm run dev
 ```
 
-The frontend will be served via Vite on:
+Create a `.env` file in the `frontend/` directory with the following content:
 
 ```
-http://localhost:5173
+VITE_BACKEND_URL=http://backend-api.com:3001
+VITE_FRONTEND_HOST=frontend.com
+VITE_FRONTEND_PORT=3000
 ```
 
-Make sure the backend is running and accessible via:
+The frontend will be served based on the values from the `.env` file:
+
+- **Frontend Host:** `http://frontend.com:3000`
+- **Backend API:** `http://backend-api.com:3001`
+
+If you want to test locally, you can change the values to:
 
 ```
-http://localhost:3001
+VITE_BACKEND_URL=http://localhost:3001
+VITE_FRONTEND_HOST=localhost
+VITE_FRONTEND_PORT=5173
 ```
+
+**Note**: The frontend proxy (`/api`) will forward requests to the backend based on `VITE_BACKEND_URL`.
 
 Make sure to run both frontend and backend in **parallel** during development.
 
-### Test Accounts
+---
 
-You can use the following test account to log in:
+## .env.example files
 
-- Email: test@example.com  
-- Password: Test123!
+To support easier deployment and onboarding, both backend and frontend include example `.env.example` files with placeholder values:
+
+- `frontend/.env.example`
+- `backend/.env.example`
+
+Always copy these into `.env` and adjust values to match your environment.
 
 ---
 
