@@ -32,7 +32,7 @@ import contactRouter from './routes/contact.js';
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: 'http://frontend.com:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json());

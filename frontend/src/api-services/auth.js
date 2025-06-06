@@ -4,7 +4,7 @@ export async function registerUser(formData) {
     data.append(key, formData[key]);
   }
 
-  const res = await fetch("http://backend-api.com:3001/api/users/Register", {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/Register`, {
     method: "POST",
     body: data,
   });
@@ -16,7 +16,7 @@ export async function registerUser(formData) {
 //--------------------------------------------------------------------------
 
 export async function loginUser(credentials) {
-  const res = await fetch("http://backend-api.com:3001/api/users/Login", {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/Login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export async function loginUser(credentials) {
 
 export async function fetchUserProfile() {
   const token = localStorage.getItem("token");
-  const res = await fetch("http://backend-api.com:3001/api/users/me", {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/me`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
