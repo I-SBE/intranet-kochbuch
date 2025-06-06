@@ -26,7 +26,7 @@ function EditRecipe() {
   const fetchRecipe = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -53,7 +53,7 @@ function EditRecipe() {
   const handleUpdate = async (updatedRecipe) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ function EditRecipe() {
     setDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`

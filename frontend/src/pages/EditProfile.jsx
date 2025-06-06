@@ -28,7 +28,7 @@ function EditProfile() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("http://backend-api.com:3001/api/users/me", {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -43,7 +43,7 @@ function EditProfile() {
             image: null,
           });
           if (data.user.image_url) {
-            setPreview(`http://backend-api.com:3001/profile_pics/${data.user.image_url}`);
+            setPreview(`${import.meta.env.VITE_API_BASE_URL}/profile_pics/${data.user.image_url}`);
           }
         }
       })
@@ -77,7 +77,7 @@ function EditProfile() {
     if (formData.image) form.append("image", formData.image);
 
     try {
-      const res = await fetch("http://backend-api.com:3001/api/users/update-profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/update-profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`

@@ -33,7 +33,7 @@ function Profile() {
   const fetchUserRecipes = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://backend-api.com:3001/api/users/my-recipes", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/my-recipes`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -111,6 +111,7 @@ function Profile() {
           onFavoriteAdded={handleFavoriteAdded}
           onFavoriteDeleted={handleFavoriteDeleted}
           currentUser={user}
+          showPrivacy={true}
         />
 
         <hr className="profile-divider" />
@@ -127,6 +128,7 @@ function Profile() {
           onFavoriteAdded={handleFavoriteAdded}
           onFavoriteDeleted={handleFavoriteDeleted}
           currentUser={user}
+          showPrivacy={true}
         />
       </div>
     </ProfileSpinnerOrError>

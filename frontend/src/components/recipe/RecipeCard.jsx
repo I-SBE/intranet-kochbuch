@@ -28,7 +28,7 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
     const method = isFavorite ? "DELETE" : "POST";
 
     try {
-      const response = await fetch(`http://backend-api.com:3001/api/recipes/favorites/${recipe.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/favorites/${recipe.id}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
             {recipe.images.map((img, idx) => (
               <Carousel.Item key={idx}>
                 <img
-                  src={`http://backend-api.com:3001/uploads/${img}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}/uploads/${img}`}
                   alt={`Bild ${idx + 1}`}
                   className="recipe-card-image"
                 />
@@ -74,8 +74,8 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
           <img
             src={
               Array.isArray(recipe.images) && recipe.images.length > 0
-                ? `http://backend-api.com:3001/uploads/${recipe.images[0]}`
-                : `http://backend-api.com:3001/uploads/default-recipe.png`
+                ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${recipe.images[0]}`
+                : `${import.meta.env.VITE_API_BASE_URL}/uploads/default-recipe.png`
             }
             alt={recipe.title}
             className="recipe-card-image"
@@ -111,16 +111,19 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
       <Card.Body className="recipe-card-body">
         <Card.Title className="recipe-card-title">{recipe.title}</Card.Title>
 
-        <Card.Text className="recipe-card-text text-muted small">
+        <Card.Text className="recipe-card-text text-muted small mb-1">
           {recipe.ingredients || "Rezept entdecken!"}
-          {showPrivacy && (
-            <span className="small mt-1">
-              {isPublic
-                ? <span style={{ color: "green" }}>🌍 Öffentlich</span>
-                : <span style={{ color: "red" }}>🔴 Privat</span>}
-            </span>
-          )}
         </Card.Text>
+
+        {showPrivacy && (
+          <div className="privacy-label mb-2">
+            {isPublic
+              ? <span style={{ color: "green" }}>🌍 Öffentlich</span>
+              : <span style={{ color: "red" }}>🔴 Privat</span>}
+          </div>
+        )}
+
+
 
         <Button className="recipe-read-btn" onClick={handleNavigate}>
           Mehr lesen <FiArrowRightCircle className="ms-1" />

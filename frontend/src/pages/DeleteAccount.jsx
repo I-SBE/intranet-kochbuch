@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Container, Button, Alert, Modal, Spinner } from "react-bootstrap";
+import { Button, Alert, Modal, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 //--------------------------------------------------------------------------
 
@@ -9,7 +10,7 @@ function DeleteAccount() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,11 +19,10 @@ function DeleteAccount() {
 
     setLoading(true);
     const token = localStorage.getItem("token");
-    localStorage.removeItem("token");
     navigate("/");
 
     try {
-        const res = await fetch("http://backend-api.com:3001/api/users/delete-account", {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/delete-account`, {
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${token}`
@@ -32,7 +32,10 @@ function DeleteAccount() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
 
-        console.log("Konto erfolgreich gelöscht.");
+        setMessage("Konto erfolgreich gelöscht.");
+        localStorage.removeItem("token");
+        if (typeof logout === "function") logout();
+
     } catch (err) {
         console.error("Fehler beim Löschen:", err.message);
     } finally {

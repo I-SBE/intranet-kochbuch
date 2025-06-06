@@ -1,6 +1,6 @@
--- --------------------------------------------------
+--===================================================
 -- SQL Dump für Projekt: Intranet-Kochbuch
--- --------------------------------------------------
+--===================================================
 
 -- 1. Create Database: with Name: fi37_sbeih_fpadw
 
@@ -10,7 +10,7 @@ CREATE DATABASE IF NOT EXISTS fi37_sbeih_fpadw
 
 USE fi37_sbeih_fpadw;
 
------------------------------------------------------
+--===================================================
 
 -- 2. Create Table: users
 
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
------------------------------------------------------
+--===================================================
 
 -- 3. Create Table: recipes
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS recipes (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
------------------------------------------------------
+--===================================================
 
 -- 4. Create Table: recipe_images
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS recipe_images (
   FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
 );
 
------------------------------------------------------
+--===================================================
 
 -- 5. Create Table: comments
 
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS comments (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
------------------------------------------------------
+--===================================================
 
 -- 6. Create Table: favorites
 
@@ -81,7 +81,8 @@ CREATE TABLE IF NOT EXISTS favorites (
   FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
 );
 
+--===================================================
 
 -- for the Import in DB:
 
--- mysql -u root -p < db/fi37_sbeih_fpadw.sql
+-- mysql -u root -p < ../fi37_sbeih_fpadw.sql

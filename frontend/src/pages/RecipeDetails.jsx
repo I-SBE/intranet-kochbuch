@@ -49,11 +49,11 @@ function RecipeDetails() {
     const fetchData = async () => {
       try {
         const [recipeRes, userRes, commentsRes] = await Promise.all([
-          fetch(`http://backend-api.com:3001/api/recipes/${id}`, {
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetchUserProfile(),
-          fetch(`http://backend-api.com:3001/api/comments/${id}`, {
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comments/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -89,7 +89,7 @@ function RecipeDetails() {
     }
 
     try {
-      const res = await fetch(`http://backend-api.com:3001/api/comments/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comments/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ function RecipeDetails() {
     setDeleteLoading(true);
 
     try {
-      const res = await fetch(`http://backend-api.com:3001/api/comments/${selectedCommentId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comments/${selectedCommentId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ function RecipeDetails() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://backend-api.com:3001/api/comments/${commentId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/comments/${commentId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ function RecipeDetails() {
           {(recipe.images.length > 0 ? recipe.images : ["default-recipe.png"]).map((img, index) => (
             <Carousel.Item key={index}>
               <img
-                src={`http://backend-api.com:3001/uploads/${img}`}
+                src={`${import.meta.env.VITE_API_BASE_URL}/uploads/${img}`}
                 alt={`Bild ${index + 1}`}
                 className="recipe-image"
               />
@@ -258,7 +258,7 @@ function RecipeDetails() {
                 <div className="d-flex align-items-start justify-content-between mb-2">
                   <div className="d-flex align-items-center">
                     <img
-                      src={`http://backend-api.com:3001/profile_pics/${comment.image_url || "default-profile.png"}`}
+                      src={`${import.meta.env.VITE_API_BASE_URL}/profile_pics/${comment.image_url || "default-profile.png"}`}
                       alt="Profil"
                       className="comment-avatar me-2"
                     />
