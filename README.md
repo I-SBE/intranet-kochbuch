@@ -24,9 +24,6 @@ A web-based intranet application (Single Page Application) developed as part of 
 - View recipe details
 - Recipes are stored in a MariaDB database with image paths and user references
 - JWT-based authentication & protected routes
-
-### Optional Features
-
 - Add and delete comments on recipes
 - Save recipes as favorites
 - Filter/search recipes by category or title
