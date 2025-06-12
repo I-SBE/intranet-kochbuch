@@ -26,7 +26,7 @@ function Home() {
 
   useEffect(() => {
 
-    fetch("/api/recipes")
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes`)
       .then((res) => {
         if (!res.ok) throw new Error("Fehler beim Abrufen der Rezepte");
         return res.json();

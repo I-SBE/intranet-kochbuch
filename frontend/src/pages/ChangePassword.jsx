@@ -29,7 +29,7 @@ function ChangePassword() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/change-password`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

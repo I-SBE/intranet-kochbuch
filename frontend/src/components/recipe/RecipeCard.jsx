@@ -28,7 +28,7 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
     const method = isFavorite ? "DELETE" : "POST";
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/favorites/${recipe.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes/favorites/${recipe.id}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
             {recipe.images.map((img, idx) => (
               <Carousel.Item key={idx}>
                 <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/uploads/${img}`}
+                  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${img}`}
                   alt={`Bild ${idx + 1}`}
                   className="recipe-card-image"
                 />
@@ -74,8 +74,8 @@ function RecipeCard({ recipe, editable = false, showPrivacy = false, onEdit, fav
           <img
             src={
               Array.isArray(recipe.images) && recipe.images.length > 0
-                ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${recipe.images[0]}`
-                : `${import.meta.env.VITE_API_BASE_URL}/uploads/default-recipe.png`
+                ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${recipe.images[0]}`
+                : `${import.meta.env.VITE_BACKEND_URL}/uploads/default-recipe.png`
             }
             alt={recipe.title}
             className="recipe-card-image"

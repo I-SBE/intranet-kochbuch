@@ -22,7 +22,7 @@ function DeleteAccount() {
     navigate("/");
 
     try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/delete-account`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/delete-account`, {
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${token}`

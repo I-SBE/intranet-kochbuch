@@ -36,7 +36,7 @@ function RecipeGallery() {
   useEffect(() => {
 
     const query = new URLSearchParams(filters).toString();
-    const url = `${import.meta.env.VITE_API_BASE_URL}/api/recipes${query ? `?${query}` : ""}`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/api/recipes${query ? `?${query}` : ""}`;
 
     fetch(url)
       .then(res => {

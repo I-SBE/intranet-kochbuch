@@ -64,7 +64,7 @@ function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", init
         const formData = new FormData();
         newImages.forEach((img) => formData.append("images", img));
 
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${initialData.id}/images`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes/${initialData.id}/images`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
           body: formData
@@ -94,7 +94,7 @@ function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", init
 
         newImages.forEach((img) => formData.append("images", img));
 
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
           body: formData
@@ -127,7 +127,7 @@ function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", init
     formData.append("newImage", newFile);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${initialData.id}/images/${oldImageName}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes/${initialData.id}/images/${oldImageName}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -171,7 +171,7 @@ function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", init
           setDeleteLoading(true);
           try {
             if (selectedImageToDelete) {
-              const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/${initialData.id}/images/${selectedImageToDelete}`, {
+              const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes/${initialData.id}/images/${selectedImageToDelete}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` }
               });
@@ -207,7 +207,7 @@ function RecipeForm({onCloseForm, onRecipeAdded, onSubmit, mode = "create", init
           {existingImages.map((img, idx) => (
             <div key={idx} style={{ position: "relative" }}>
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/uploads/${img}`}
+                src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${img}`}
                 alt={`img-${idx}`}
                 style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ccc" }}
               />

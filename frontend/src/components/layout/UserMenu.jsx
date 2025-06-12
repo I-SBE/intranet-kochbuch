@@ -9,7 +9,7 @@ function UserMenu() {
   return (
     <>
       <Image
-        src={`${import.meta.env.VITE_API_BASE_URL}/profile_pics/${user.image_url || "default-profile.png"}`}
+        src={`${import.meta.env.VITE_BACKEND_URL}/profile_pics/${user.image_url || "default-profile.png"}`}
         roundedCircle
         height={30}
         width={30}

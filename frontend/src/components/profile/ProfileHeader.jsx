@@ -15,7 +15,7 @@ function ProfileHeader({ user, totalRecipes, publicCount, privateCount }) {
   return (
     <div className="profile-header d-flex align-items-center gap-4 mb-4 border-bottom pb-4">
       <Image
-        src={`${import.meta.env.VITE_API_BASE_URL}/profile_pics/${user.image_url || "default-profile.png"}`}
+        src={`${import.meta.env.VITE_BACKEND_URL}/profile_pics/${user.image_url || "default-profile.png"}`}
         roundedCircle
         alt="Profilbild"
       />

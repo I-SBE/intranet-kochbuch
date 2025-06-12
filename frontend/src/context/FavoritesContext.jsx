@@ -22,7 +22,7 @@ export const FavoritesProvider = ({ children }) => {
       return;
     }
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recipes/favorites`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/recipes/favorites`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
